@@ -1,4 +1,3 @@
-import 'package:firebase_app_web/main.dart';
 import 'package:firebase_app_web/pages/HomePage.dart';
 import 'package:firebase_app_web/screens/add_proyecto_screen.dart';
 import 'package:firebase_app_web/screens/empresaproyect.dart';
