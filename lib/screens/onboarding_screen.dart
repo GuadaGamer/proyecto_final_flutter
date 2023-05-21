@@ -39,6 +39,15 @@ class OnboardingScreen extends StatelessWidget {
         subtitleColor: Colors.blue,
         icono: const Icon(Icons.input),
         backgraund: Lottie.asset('assets/espacio.json')),
+    CardData(
+        title: "!Tip!",
+        subtitle:
+            "Inicia sesión con google y manten tu sesión abierta.",
+        backgraundColor: const Color.fromARGB(255, 28, 28, 28),
+        titleColor: Colors.white,
+        subtitleColor: Colors.blue,
+        icono: const Icon(Icons.input),
+        backgraund: Lottie.asset('assets/tierra.json')),
   ];
 
   @override
