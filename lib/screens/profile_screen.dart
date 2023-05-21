@@ -154,7 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     txtRFCFact.text =
                                         snapshot.data!.docs[0].get('rfc');
                                     txtTelFact.text =
-                                        snapshot.data!.docs[0].get('telefono');
+                                        snapshot.data!.docs[0].get('telefono').toString();
                                     txtRubroFact.text = snapshot.data!.docs[0]
                                         .get('tipo_empresa');
                                     txtUrlFact.text =
