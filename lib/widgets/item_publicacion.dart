@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -19,16 +20,8 @@ class _ItemProyectosState extends State<ItemProyectos> {
     return Column(
       children: [
         Text(widget.nombre, style: TextStyle(color: Colors.white),),
-        ClipRRect(
-          child: FadeInImage(
-            fit: BoxFit.cover,
-            height: 225,
-            placeholder: const AssetImage('assets/loading.gif'),
-            //image: const AssetImage('assets/maincraft.webp')
-            image: NetworkImage(
-                widget.url, scale: 1),
-          ),
-        ),
+        CachedNetworkImage(
+              imageUrl: widget.url),
         SizedBox(height: 10,),
         new LinearPercentIndicator(
           lineHeight: 14.0,
