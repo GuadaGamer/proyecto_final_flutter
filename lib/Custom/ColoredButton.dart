@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class ColoredButton extends StatelessWidget {
   const ColoredButton(
-      {Key key, this.imagePath, this.onClick, this.text, this.iconData})
+      {Key? key, required this.imagePath, required this.onClick, required this.text, required this.iconData})
       : super(key: key);
   final String text;
   final String imagePath;

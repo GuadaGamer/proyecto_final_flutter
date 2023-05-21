@@ -1,6 +1,5 @@
 import 'package:firebase_app_web/pages/HomePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -17,26 +16,24 @@ class AuthClass {
   final storage = new FlutterSecureStorage();
   Future<void> googleSignIn(BuildContext context) async {
     try {
-      GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+      GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
       GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
+          await googleSignInAccount!.authentication;
       AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
-      if (googleSignInAccount != null) {
-        UserCredential userCredential =
-            await _auth.signInWithCredential(credential);
-        storeTokenAndData(userCredential);
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (builder) => HomePage()),
-            (route) => false);
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      storeTokenAndData(userCredential);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (builder) => HomePage()),
+          (route) => false);
 
-        final snackBar =
-            SnackBar(content: Text(userCredential.user.displayName));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
+      final snackBar =
+          SnackBar(content: Text(userCredential.user!.displayName!));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } catch (e) {
       print("here---->");
       final snackBar = SnackBar(content: Text(e.toString()));
@@ -44,7 +41,7 @@ class AuthClass {
     }
   }
 
-  Future<void> signOut({BuildContext context}) async {
+  Future<void> signOut({required BuildContext context}) async {
     try {
       await _googleSignIn.signOut();
       await _auth.signOut();
@@ -58,12 +55,12 @@ class AuthClass {
   void storeTokenAndData(UserCredential userCredential) async {
     print("storing token and data");
     await storage.write(
-        key: "token", value: userCredential.credential.token.toString());
+        key: "token", value: userCredential.credential?.token.toString());
     await storage.write(
         key: "usercredential", value: userCredential.toString());
   }
 
-  Future<String> getToken() async {
+  Future<String?> getToken() async {
     return await storage.read(key: "token");
   }
 
@@ -78,7 +75,7 @@ class AuthClass {
       showSnackBar(context, exception.toString());
     };
     PhoneCodeSent codeSent =
-        (String verificationID, [int forceResnedingtoken]) {
+        (String verificationID, [int? forceResnedingtoken]) {
       showSnackBar(context, "Verification Code sent on the phone number");
       setData(verificationID);
     };

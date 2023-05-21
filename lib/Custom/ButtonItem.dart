@@ -3,12 +3,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class ButtonItem extends StatelessWidget {
   const ButtonItem(
-      {Key key,
-      this.imagePath,
-      this.onClick,
-      this.text,
-      this.iconData,
-      this.size})
+      {Key? key,
+      required this.imagePath,
+      required this.onClick,
+      required this.text,
+      required this.iconData,
+      required this.size})
       : super(key: key);
   final String text;
   final String imagePath;

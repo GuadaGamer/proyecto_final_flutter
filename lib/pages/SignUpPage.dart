@@ -1,13 +1,12 @@
 import 'package:firebase_app_web/Service/Auth_Service.dart';
 import 'package:firebase_app_web/pages/HomePage.dart';
-import 'package:firebase_app_web/pages/PhoneAuth.dart';
 import 'package:firebase_app_web/pages/SignInPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 class SignUpPage extends StatefulWidget {
-  SignUpPage({Key key}) : super(key: key);
+  SignUpPage({Key? key}) : super(key: key);
 
   @override
   _SignUpPageState createState() => _SignUpPageState();
@@ -17,8 +16,8 @@ class _SignUpPageState extends State<SignUpPage> {
   firebase_auth.FirebaseAuth firebaseAuth = firebase_auth.FirebaseAuth.instance;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _pwdController = TextEditingController();
-  bool circular = false;
   AuthClass authClass = AuthClass();
+  ValueNotifier<bool> circular = ValueNotifier<bool>(false);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +31,7 @@ class _SignUpPageState extends State<SignUpPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Sign Up",
+                "Registrar cuenta",
                 style: TextStyle(
                   fontSize: 35,
                   color: Colors.white,
@@ -42,36 +41,29 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(
                 height: 20,
               ),
-              buttonItem("assets/google.svg", "Continue with Google", 25,
-                  () async {
-                await authClass.googleSignIn(context);
-              }),
+              textItem("Correo", _emailController, false),
               SizedBox(
                 height: 15,
               ),
-              buttonItem("assets/phone.svg", "Continue with Mobile", 30, () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (builder) => PhoneAuthPage()));
-              }),
+              textItem("Contraseña", _pwdController, true),
+              SizedBox(
+                height: 40,
+              ),
+              colorButton(),
               SizedBox(
                 height: 18,
               ),
               Text(
-                "Or",
+                "Ó",
                 style: TextStyle(color: Colors.white, fontSize: 18),
               ),
               SizedBox(
                 height: 18,
               ),
-              textItem("Email....", _emailController, false),
-              SizedBox(
-                height: 15,
-              ),
-              textItem("Password...", _pwdController, true),
-              SizedBox(
-                height: 40,
-              ),
-              colorButton(),
+              buttonItem("assets/google.svg", "Continuar con Google", 25,
+                  () async {
+                await authClass.googleSignIn(context);
+              }),
               SizedBox(
                 height: 20,
               ),
@@ -79,7 +71,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "If you alredy have an Account? ",
+                    "¿Ya tienes una cuenta? ",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -93,7 +85,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           (route) => false);
                     },
                     child: Text(
-                      "Login",
+                      "Iniciar sesión",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -113,27 +105,28 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget colorButton() {
     return InkWell(
       onTap: () async {
-        setState(() {
-          circular = true;
-        });
+        circular.value = true;
         try {
           firebase_auth.UserCredential userCredential =
               await firebaseAuth.createUserWithEmailAndPassword(
                   email: _emailController.text, password: _pwdController.text);
-          print(userCredential.user.email);
-          setState(() {
-            circular = false;
-          });
-          Navigator.pushAndRemoveUntil(
+          print(userCredential.user!.email);
+          userCredential.user!.sendEmailVerification();
+          circular.value = false;
+          if (userCredential.user!.emailVerified) {
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (builder) => HomePage()),
               (route) => false);
+          }else{
+            final snackbar = SnackBar(content: Text('Email no verificado'));
+                ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                circular.value = false;
+          }
         } catch (e) {
           final snackbar = SnackBar(content: Text(e.toString()));
           ScaffoldMessenger.of(context).showSnackBar(snackbar);
-          setState(() {
-            circular = false;
-          });
+          circular.value = false;
         }
       },
       child: Container(
@@ -148,22 +141,28 @@ class _SignUpPageState extends State<SignUpPage> {
           ]),
         ),
         child: Center(
-          child: circular
-              ? CircularProgressIndicator()
-              : Text(
-                  "Sign Up",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                ),
+          child: ValueListenableBuilder(
+              valueListenable: circular,
+              builder: (context, value, child) {
+                if (value) {
+                  return CircularProgressIndicator();
+                } else {
+                  return Text(
+                    "Sign Up",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  );
+                }
+              }),
         ),
       ),
     );
   }
 
   Widget buttonItem(
-      String imagepath, String buttonName, double size, Function onTap) {
+      String imagepath, String buttonName, double size, Function() onTap) {
     return InkWell(
       onTap: onTap,
       child: Container(

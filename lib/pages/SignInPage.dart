@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'HomePage.dart';
 
 class SignInPage extends StatefulWidget {
-  SignInPage({Key key}) : super(key: key);
+  SignInPage({Key? key}) : super(key: key);
 
   @override
   _SignInPageState createState() => _SignInPageState();
@@ -17,8 +17,8 @@ class _SignInPageState extends State<SignInPage> {
   firebase_auth.FirebaseAuth firebaseAuth = firebase_auth.FirebaseAuth.instance;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _pwdController = TextEditingController();
-  bool circular = false;
   AuthClass authClass = AuthClass();
+  ValueNotifier<bool> circular = ValueNotifier<bool>(false);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class _SignInPageState extends State<SignInPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Sign In",
+                "Iniciar Sesión",
                 style: TextStyle(
                   fontSize: 35,
                   color: Colors.white,
@@ -42,32 +42,28 @@ class _SignInPageState extends State<SignInPage> {
               SizedBox(
                 height: 20,
               ),
-              buttonItem("assets/google.svg", "Continue with Google", 25, () {
-                authClass.googleSignIn(context);
-              }),
+              textItem("Correo", _emailController, false),
               SizedBox(
                 height: 15,
               ),
-              buttonItem("assets/phone.svg", "Continue with Mobile", 30, () {}),
+              textItem("Contraseña", _pwdController, true),
+              SizedBox(
+                height: 40,
+              ),
+              colorButton(),
               SizedBox(
                 height: 18,
               ),
               Text(
-                "Or",
+                "Ó",
                 style: TextStyle(color: Colors.white, fontSize: 18),
               ),
               SizedBox(
                 height: 18,
               ),
-              textItem("Email....", _emailController, false),
-              SizedBox(
-                height: 15,
-              ),
-              textItem("Password...", _pwdController, true),
-              SizedBox(
-                height: 40,
-              ),
-              colorButton(),
+              buttonItem("assets/google.svg", "Continuar con Google", 25, () {
+                authClass.googleSignIn(context);
+              }),
               SizedBox(
                 height: 20,
               ),
@@ -75,7 +71,7 @@ class _SignInPageState extends State<SignInPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "If you don't have an Account? ",
+                    "¿Aun no tienes cuenta? ",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -89,7 +85,7 @@ class _SignInPageState extends State<SignInPage> {
                           (route) => false);
                     },
                     child: Text(
-                      "SignUp",
+                      "Crear cuenta",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -102,14 +98,16 @@ class _SignInPageState extends State<SignInPage> {
               SizedBox(
                 height: 10,
               ),
-              Text(
-                "Forgot Password?",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "¿Olvidaste tu contraseña?",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )),
             ],
           ),
         ),
@@ -124,10 +122,8 @@ class _SignInPageState extends State<SignInPage> {
           firebase_auth.UserCredential userCredential =
               await firebaseAuth.signInWithEmailAndPassword(
                   email: _emailController.text, password: _pwdController.text);
-          print(userCredential.user.email);
-          setState(() {
-            circular = false;
-          });
+          print(userCredential.user!.email);
+          circular.value = false;
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (builder) => HomePage()),
@@ -135,9 +131,7 @@ class _SignInPageState extends State<SignInPage> {
         } catch (e) {
           final snackbar = SnackBar(content: Text(e.toString()));
           ScaffoldMessenger.of(context).showSnackBar(snackbar);
-          setState(() {
-            circular = false;
-          });
+          circular.value = false;
         }
       },
       child: Container(
@@ -152,22 +146,28 @@ class _SignInPageState extends State<SignInPage> {
           ]),
         ),
         child: Center(
-          child: circular
-              ? CircularProgressIndicator()
-              : Text(
-                  "Sign In",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                ),
+          child: ValueListenableBuilder(
+              valueListenable: circular,
+              builder: (context, value, child) {
+                if (value) {
+                  return CircularProgressIndicator();
+                } else {
+                  return Text(
+                    "Sign In",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  );
+                }
+              }),
         ),
       ),
     );
   }
 
   Widget buttonItem(
-      String imagepath, String buttonName, double size, Function onTap) {
+      String imagepath, String buttonName, double size, Function() onTap) {
     return InkWell(
       onTap: onTap,
       child: Container(
