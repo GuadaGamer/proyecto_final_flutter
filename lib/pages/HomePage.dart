@@ -30,9 +30,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadDarkModeEnabled() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isDarkModeEnabled = prefs.getBool('is_dark') ?? false;
-    });
+    isDarkModeEnabled = prefs.getBool('is_dark') ?? false;
   }
 
   AuthClass authClass = AuthClass();
@@ -67,7 +65,9 @@ class _HomePageState extends State<HomePage> {
               builder: (context, value, child) {
                 return UserAccountsDrawerHeader(
                     currentAccountPicture: ClipRRect(
-                      child: FirebaseAuth.instance.currentUser?.photoURL!
+                      child: FirebaseAuth.instance.currentUser!.photoURL == null ?
+                        Image.asset('assets/profile.png')
+                      :FirebaseAuth.instance.currentUser!.photoURL!
                                   .contains('firebasestorage') ==
                               true
                           ? FadeInImage(
@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                     accountEmail: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text(FirebaseAuth.instance.currentUser!.displayName!),
+                          Text(FirebaseAuth.instance.currentUser!.displayName ?? 'Sin nombre'),
                           Icon(
                             Icons.account_circle,
                             color: Colors.white,
@@ -151,7 +151,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.pushNamed(context, '/add').then((value) {
-            setState(() {});
+            
           });
         },
         label: const Text('Añadir proyecto'),

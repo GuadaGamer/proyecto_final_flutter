@@ -73,9 +73,12 @@ class EmpresasFirebase {
       return List.empty();
     }
     DocumentSnapshot snapshot = querySnapshot.docs.first;
-    List<DocumentReference> references = List.from(snapshot.get('proyectos'));
-    List<String> ids = references.map((e) => e.id).toList();
-
-    return ids;
+    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+    if(data.containsKey('proyectos')){
+      List<DocumentReference> references = List.from(snapshot.get('proyectos'));
+      List<String> ids = references.map((e) => e.id).toList();
+      return ids;
+    }
+    return  List.empty();
   }
 }

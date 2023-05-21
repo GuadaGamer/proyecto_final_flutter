@@ -113,16 +113,10 @@ class _SignUpPageState extends State<SignUpPage> {
           print(userCredential.user!.email);
           userCredential.user!.sendEmailVerification();
           circular.value = false;
-          if (userCredential.user!.emailVerified) {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (builder) => HomePage()),
               (route) => false);
-          }else{
-            final snackbar = SnackBar(content: Text('Email no verificado'));
-                ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                circular.value = false;
-          }
         } catch (e) {
           final snackbar = SnackBar(content: Text(e.toString()));
           ScaffoldMessenger.of(context).showSnackBar(snackbar);

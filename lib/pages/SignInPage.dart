@@ -1,5 +1,7 @@
 import 'package:firebase_app_web/Service/Auth_Service.dart';
 import 'package:firebase_app_web/pages/SignUpPage.dart';
+import 'package:firebase_app_web/screens/recuperar_pass.dart';
+import 'package:firebase_app_web/screens/verificar_email.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -12,6 +14,8 @@ class SignInPage extends StatefulWidget {
   @override
   _SignInPageState createState() => _SignInPageState();
 }
+
+ValueNotifier<bool> verified = ValueNotifier<bool>(false);
 
 class _SignInPageState extends State<SignInPage> {
   firebase_auth.FirebaseAuth firebaseAuth = firebase_auth.FirebaseAuth.instance;
@@ -99,7 +103,10 @@ class _SignInPageState extends State<SignInPage> {
                 height: 10,
               ),
               TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => PasswordResetScreen()));
+                  },
                   child: Text(
                     "¿Olvidaste tu contraseña?",
                     style: TextStyle(
@@ -124,10 +131,14 @@ class _SignInPageState extends State<SignInPage> {
                   email: _emailController.text, password: _pwdController.text);
           print(userCredential.user!.email);
           circular.value = false;
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (builder) => HomePage()),
-              (route) => false);
+          firebaseAuth.currentUser!.emailVerified ?
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (builder) => HomePage()),
+                      (route) => false):
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => EmailVerificationScreen()));
+                
         } catch (e) {
           final snackbar = SnackBar(content: Text(e.toString()));
           ScaffoldMessenger.of(context).showSnackBar(snackbar);

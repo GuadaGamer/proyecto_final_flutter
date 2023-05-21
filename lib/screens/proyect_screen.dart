@@ -196,6 +196,7 @@ class _ProyectScreenState extends State<ProyectScreen> {
                                                         _firebase
                                                             .insertarDonacion(
                                                                 {
+                                                              'correo': FirebaseAuth.instance.currentUser!.email,
                                                               'cuando': DateTime
                                                                   .now(),
                                                               'cuanto':
