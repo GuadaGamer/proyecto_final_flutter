@@ -23,7 +23,6 @@ class _ProyectScreenState extends State<ProyectScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
     final arg = ModalRoute.of(context)!.settings.arguments;
     String ids = widget.id == null ? arg.toString() : widget.id.toString();
 
@@ -196,7 +195,11 @@ class _ProyectScreenState extends State<ProyectScreen> {
                                                         _firebase
                                                             .insertarDonacion(
                                                                 {
-                                                              'correo': FirebaseAuth.instance.currentUser!.email,
+                                                              'correo':
+                                                                  FirebaseAuth
+                                                                      .instance
+                                                                      .currentUser!
+                                                                      .email,
                                                               'cuando': DateTime
                                                                   .now(),
                                                               'cuanto':
@@ -208,9 +211,24 @@ class _ProyectScreenState extends State<ProyectScreen> {
                                                                     .data!
                                                                     .docs[0]
                                                                     .id);
-                                                        _firebase.updProyecto({
-                                                          'total_recaudado': (snapshot.data!.docs[0].get('total_recaudado').toInt()+ int.parse(txtValor.text))}
-                                                        , snapshot.data!.docs[0].id).whenComplete(() => txtValor.clear());
+                                                        _firebase.updProyecto(
+                                                            {
+                                                              'total_recaudado': (snapshot
+                                                                      .data!
+                                                                      .docs[0]
+                                                                      .get(
+                                                                          'total_recaudado')
+                                                                      .toInt() +
+                                                                  int.parse(
+                                                                      txtValor
+                                                                          .text))
+                                                            },
+                                                            snapshot
+                                                                .data!
+                                                                .docs[0]
+                                                                .id).whenComplete(
+                                                            () => txtValor
+                                                                .clear());
                                                         var snackBar = SnackBar(
                                                             content: Text(
                                                                 'Inversión realizado con exito'));
@@ -265,8 +283,15 @@ class _ProyectScreenState extends State<ProyectScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.grey[700],
-        onPressed: () async{
-          await FirebaseMessaging.instance.subscribeToTopic('proyecto');
+        onPressed: () async {
+          await FirebaseMessaging.instance
+              .subscribeToTopic('proyecto')
+              .whenComplete(() => ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Nueva subscripcion activa'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  ));
         },
         label: Text('Seguir proyecto'),
         icon: Icon(Icons.favorite),
