@@ -31,9 +31,9 @@ class AuthClass {
           MaterialPageRoute(builder: (builder) => HomePage()),
           (route) => false);
 
-      final snackBar =
-          SnackBar(content: Text(userCredential.user!.displayName!));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      // final snackBar =
+      //     SnackBar(content: Text(userCredential.user!.displayName!));
+      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } catch (e) {
       print("here---->");
       final snackBar = SnackBar(content: Text(e.toString()));

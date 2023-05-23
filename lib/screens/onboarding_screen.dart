@@ -19,7 +19,7 @@ class OnboardingScreen extends StatelessWidget {
         backgraundColor: const Color.fromARGB(255, 28, 28, 28),
         titleColor: Colors.pink,
         subtitleColor: Colors.white,
-        icono: const Icon(Icons.next_plan),
+        icono: const Icon(Icons.next_plan, size: 80, color: Colors.pink,),
         backgraund: Lottie.asset('assets/espacio.json')),
     CardData(
         title: "¿Como utilizarla?",
@@ -28,7 +28,7 @@ class OnboardingScreen extends StatelessWidget {
         backgraundColor: const Color.fromARGB(255, 21, 21, 58),
         titleColor: Colors.green,
         subtitleColor: Colors.white,
-        icono: const Icon(Icons.next_plan),
+        icono: const Icon(Icons.next_plan, size: 80, color: Colors.green,),
         backgraund: Lottie.asset('assets/tierra.json')),
     CardData(
         title: "Inversiones",
@@ -37,16 +37,17 @@ class OnboardingScreen extends StatelessWidget {
         backgraundColor: const Color.fromARGB(255, 28, 28, 28),
         titleColor: Colors.white,
         subtitleColor: Colors.blue,
-        icono: const Icon(Icons.input),
+        icono: const Icon(Icons.next_plan, size: 80, color: Colors.white,),
         backgraund: Lottie.asset('assets/espacio.json')),
     CardData(
         title: "!Tip!",
         subtitle:
             "Inicia sesión con google y manten tu sesión abierta.",
-        backgraundColor: const Color.fromARGB(255, 28, 28, 28),
-        titleColor: Colors.white,
+        backgraundColor: const Color.fromARGB(255, 21, 21, 58),
+        titleColor: Colors.cyan,
         subtitleColor: Colors.blue,
-        icono: const Icon(Icons.input),
+        icono: const Icon(Icons.input, size: 80,
+              color: Colors.cyan),
         backgraund: Lottie.asset('assets/tierra.json')),
   ];
 

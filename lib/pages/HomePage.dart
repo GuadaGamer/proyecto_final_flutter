@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_app_web/Service/Auth_Service.dart';
 import 'package:firebase_app_web/main.dart';
 import 'package:firebase_app_web/providers/islogin_provider.dart';
@@ -70,12 +71,12 @@ class _HomePageState extends State<HomePage> {
                       :FirebaseAuth.instance.currentUser!.photoURL!
                                   .contains('firebasestorage') ==
                               true
-                          ? FadeInImage(
+                          ? CachedNetworkImage(
                               fit: BoxFit.fitWidth,
-                              placeholder:
-                                  const AssetImage('assets/loading.gif'),
-                              image: NetworkImage(
-                                  FirebaseAuth.instance.currentUser!.photoURL!),
+                              placeholder: ((context, url) =>
+                                  Image.asset('assets/loading.gif')),
+                              imageUrl: 
+                                  FirebaseAuth.instance.currentUser!.photoURL!,
                             )
                           : Image.asset('assets/profile.png'),
                     ),
@@ -154,6 +155,7 @@ class _HomePageState extends State<HomePage> {
             
           });
         },
+        backgroundColor: Colors.green[800],
         label: const Text('Añadir proyecto'),
         icon: const Icon(Icons.note_add),
       ),

@@ -48,47 +48,49 @@ class PasswordResetScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Recuperación de Contraseña'),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Ingrese su correo electrónico para recibir instrucciones de restablecimiento de contraseña:',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 10),
-            textItem('Correo Electrónico', _emailController, false),
-            SizedBox(height: 10),
-            InkWell(
-              child: Container(
-                width: MediaQuery.of(context).size.width - 100,
-                height: 60,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(colors: [
-                    Color(0xfffd746c),
-                    Color(0xffff9068),
-                    Color(0xfffd746c)
-                  ]),
-                ),
-                child: Center(
-                    child: Text(
-                  "Enviar correo",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                )),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Ingrese su correo electrónico para recibir instrucciones de restablecimiento de contraseña:',
+                style: TextStyle(fontSize: 16),
               ),
-              onTap: () {
-                String email = _emailController.text;
-                auth.enviarCorreoRestablecimiento(email).then((value) =>
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text(value))));
-              },
-            ),
-          ],
+              SizedBox(height: 10),
+              textItem('Correo Electrónico', _emailController, false),
+              SizedBox(height: 10),
+              InkWell(
+                child: Container(
+                  width: MediaQuery.of(context).size.width - 100,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    gradient: LinearGradient(colors: [
+                      Color(0xfffd746c),
+                      Color(0xffff9068),
+                      Color(0xfffd746c)
+                    ]),
+                  ),
+                  child: Center(
+                      child: Text(
+                    "Enviar correo",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  )),
+                ),
+                onTap: () {
+                  String email = _emailController.text;
+                  auth.enviarCorreoRestablecimiento(email).then((value) =>
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(value))));
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

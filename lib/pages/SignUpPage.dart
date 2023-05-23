@@ -1,6 +1,7 @@
 import 'package:firebase_app_web/Service/Auth_Service.dart';
 import 'package:firebase_app_web/pages/HomePage.dart';
 import 'package:firebase_app_web/pages/SignInPage.dart';
+import 'package:firebase_app_web/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -22,87 +23,184 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          color: Colors.black,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Registrar cuenta",
-                style: TextStyle(
-                  fontSize: 35,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              textItem("Correo", _emailController, false),
-              SizedBox(
-                height: 15,
-              ),
-              textItem("Contraseña", _pwdController, true),
-              SizedBox(
-                height: 40,
-              ),
-              colorButton(),
-              SizedBox(
-                height: 18,
-              ),
-              Text(
-                "Ó",
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              ),
-              SizedBox(
-                height: 18,
-              ),
-              buttonItem("assets/google.svg", "Continuar con Google", 25,
-                  () async {
-                await authClass.googleSignIn(context);
-              }),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "¿Ya tienes una cuenta? ",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
+      body: Responsive(
+        mobile: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.black,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Registrar cuenta",
+                  style: TextStyle(
+                    fontSize: 35,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (builder) => SignInPage()),
-                          (route) => false);
-                    },
-                    child: Text(
-                      "Iniciar sesión",
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                textItem("Correo", _emailController, false, MediaQuery.of(context).size.width - 70),
+                SizedBox(
+                  height: 15,
+                ),
+                textItem("Contraseña", _pwdController, true, MediaQuery.of(context).size.width - 70),
+                SizedBox(
+                  height: 40,
+                ),
+                colorButton(MediaQuery.of(context).size.width - 100),
+                SizedBox(
+                  height: 18,
+                ),
+                Text(
+                  "Ó",
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                SizedBox(
+                  height: 18,
+                ),
+                buttonItem("assets/google.svg", "Continuar con Google", 25,
+                    () async {
+                  await authClass.googleSignIn(context);
+                }, MediaQuery.of(context).size.width - 60),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "¿Ya tienes una cuenta? ",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (builder) => SignInPage()),
+                            (route) => false);
+                      },
+                      child: Text(
+                        "Iniciar sesión",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        desktop: Text(''),
+        tablet: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.black,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Registrar cuenta",
+                      style: TextStyle(
+                        fontSize: 35,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    textItem("Correo", _emailController, false, MediaQuery.of(context).size.width / 2),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    textItem("Contraseña", _pwdController, true, MediaQuery.of(context).size.width / 2),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    colorButton( MediaQuery.of(context).size.width /2),
+                  ],
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Ó",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    buttonItem("assets/google.svg", "Continuar con Google", 25,
+                        () async {
+                      await authClass.googleSignIn(context);
+                    }, MediaQuery.of(context).size.width / 3),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "¿Ya tienes una cuenta? ",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (builder) => SignInPage()),
+                                (route) => false);
+                          },
+                          child: Text(
+                            "Iniciar sesión",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget colorButton() {
+  Widget colorButton(double ancho) {
     return InkWell(
       onTap: () async {
         circular.value = true;
@@ -113,7 +211,7 @@ class _SignUpPageState extends State<SignUpPage> {
           print(userCredential.user!.email);
           userCredential.user!.sendEmailVerification();
           circular.value = false;
-            Navigator.pushAndRemoveUntil(
+          Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (builder) => HomePage()),
               (route) => false);
@@ -124,7 +222,7 @@ class _SignUpPageState extends State<SignUpPage> {
         }
       },
       child: Container(
-        width: MediaQuery.of(context).size.width - 100,
+        width: ancho,
         height: 60,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
@@ -156,11 +254,11 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget buttonItem(
-      String imagepath, String buttonName, double size, Function() onTap) {
+      String imagepath, String buttonName, double size, Function() onTap, double ancho) {
     return InkWell(
       onTap: onTap,
       child: Container(
-        width: MediaQuery.of(context).size.width - 60,
+        width: ancho,
         height: 60,
         child: Card(
           color: Colors.black,
@@ -198,9 +296,9 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget textItem(
-      String labeltext, TextEditingController controller, bool obscureText) {
+      String labeltext, TextEditingController controller, bool obscureText, double ancho) {
     return Container(
-      width: MediaQuery.of(context).size.width - 70,
+      width: ancho,
       height: 55,
       child: TextFormField(
         controller: controller,

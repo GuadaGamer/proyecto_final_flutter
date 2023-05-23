@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_web/Service/publicaciones_firebasa.dart';
+import 'package:firebase_app_web/widgets/firebaseBarChart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class InversionesScreen extends StatelessWidget {
-  InversionesScreen({super.key});
+  InversionesScreen( { super.key});
 
   final ProyectosFirebase _firebase = ProyectosFirebase();
+  final ValueNotifier<bool> showAvg = ValueNotifier<bool>(false);
+  final List<ChartData> chartData = [];
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,29 @@ class InversionesScreen extends StatelessWidget {
             final documents = snapshot.data!;
             double total = 0.0;
                   for (var element in documents) {
+                    Timestamp timestamp =
+                            element.get('cuando');
+                        int milli = timestamp.millisecondsSinceEpoch;
+                        DateTime trsData =
+                            DateTime.fromMillisecondsSinceEpoch(milli);
+                        String formattedDate =
+                            DateFormat('y-dd-MM').format(trsData);
+                            print(formattedDate);
                     total = total + element.get('cuanto').toDouble();
+                    if ( chartData.isEmpty){
+                      chartData.add(new ChartData(formattedDate, element.get('cuanto').toDouble()));
+                    }else{
+                      bool nuevo = true;
+                      for (var dato in chartData) {
+                        if (dato.date == formattedDate){
+                          dato.value = dato.value + element.get('cuanto').toDouble();
+                          nuevo=false;
+                        }
+                      }
+                      if (nuevo){
+                          chartData.add(new ChartData(formattedDate, element.get('cuanto').toDouble()));
+                      }
+                    }
                   }
             return Column(
               children: [
@@ -27,6 +52,10 @@ class InversionesScreen extends StatelessWidget {
                 Text(
                     'Total invertido: $total',
                     style: TextStyle(color: Colors.white, fontSize: 30),
+                  ),
+                  Expanded(
+                    child: FirebaseBarChart(
+                    chartData: chartData),
                   ),
                 Expanded(
                   child: ListView.builder(

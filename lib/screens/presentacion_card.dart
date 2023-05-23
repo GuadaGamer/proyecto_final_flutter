@@ -1,11 +1,10 @@
-
 import 'package:firebase_app_web/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class CardData {
   final String title;
   final String subtitle;
-  //final ImageProvider image;
   final Color backgraundColor;
   final Color titleColor;
   final Color subtitleColor;
@@ -15,7 +14,6 @@ class CardData {
   const CardData({
     required this.title,
     required this.subtitle,
-    //required this.image,
     required this.backgraundColor,
     required this.titleColor,
     required this.subtitleColor,
@@ -58,7 +56,9 @@ class CardApi extends StatelessWidget {
                 const Spacer(
                   flex: 2,
                 ),
-                Flexible(flex: 20, child: Icon(Icons.next_plan, size: 80, color: data.titleColor,)),
+                Flexible(
+                    flex: 20,
+                    child: data.icono),
                 const Spacer(
                   flex: 2,
                 ),
@@ -77,56 +77,54 @@ class CardApi extends StatelessWidget {
           ),
         ],
       ),
-      desktop: Stack(
+      tablet: Stack(
         children: [
-          if (data.backgraund != null) data.backgraund!,
+          Lottie.asset('assets/obscuro.json'),
           Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 260),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding: const EdgeInsets.fromLTRB(0,150,0,0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  //Flexible(
-                  //  child: Image(image: data.image),
-                 // ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        data.title.toUpperCase(),
-                        style: TextStyle(
-                            color: data.titleColor,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
+                  Text(
+                    data.title.toUpperCase(),
+                    style: TextStyle(
+                        color: data.titleColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    height: 200,
+                    width: 300,
+                    child: Text(
+                      data.subtitle,
+                      style: TextStyle(
+                        color: data.subtitleColor,
+                        fontSize: 16,
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        height: 200,
-                        width: 300,
-                        child: Text(
-                          data.subtitle,
-                          style: TextStyle(
-                            color: data.subtitleColor,
-                            fontSize: 16,
-                          ),
-                          textAlign: TextAlign.center,
-                          textWidthBasis: TextWidthBasis.longestLine,
-                          maxLines: 9,
-                        ),
-                      ),
-                    ],
+                      textAlign: TextAlign.center,
+                      textWidthBasis: TextWidthBasis.longestLine,
+                      maxLines: 9,
+                    ),
                   ),
                 ],
               ),
             ),
           ),
+          Positioned(
+            bottom: 30,
+            left: 350,
+            child: data.icono)
         ],
       ),
+      desktop: Text(''),
     );
   }
 }
