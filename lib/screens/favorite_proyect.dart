@@ -36,7 +36,7 @@ class _ListProyectosFavoritosState extends State<ListProyectosFavoritos> {
             if (snapshot.data!.length <= 0) {
               return Center(
                   child: Text(
-                'No hay proyectos en favoritos',
+                'No hay proyectos favoritos',
                 style: TextStyle(color: Colors.white),
               ));
             }

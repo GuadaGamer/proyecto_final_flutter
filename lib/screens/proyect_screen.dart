@@ -89,14 +89,17 @@ class _ProyectScreenState extends State<ProyectScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  TextButton(
-                                      onPressed: () => _launchEmail(FirebaseAuth
-                                          .instance.currentUser!.email!),
+                                  FutureBuilder<String>(
+                                            future: _firebase.obtenerCorreoPadreDesdeHijo(widget.id.toString()),
+                                            builder: (context, snapshot) {
+                                              return TextButton(
+                                      onPressed: () => _launchEmail(snapshot.data.toString()),
                                       child: Text(
-                                          FirebaseAuth
-                                              .instance.currentUser!.email!,
+                                          snapshot.data.toString(),
                                           style:
-                                              TextStyle(color: Colors.white))),
+                                              TextStyle(color: Colors.white)));
+                                            },                                            
+                                          ),
                                   SizedBox(
                                     width: 10,
                                   ),
@@ -327,15 +330,17 @@ class _ProyectScreenState extends State<ProyectScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          TextButton(
-                                              onPressed: () => _launchEmail(
-                                                  FirebaseAuth.instance
-                                                      .currentUser!.email!),
-                                              child: Text(
-                                                  FirebaseAuth.instance
-                                                      .currentUser!.email!,
-                                                  style: TextStyle(
-                                                      color: Colors.white))),
+                                          FutureBuilder<String>(
+                                            future: _firebase.obtenerCorreoPadreDesdeHijo(widget.id.toString()),
+                                            builder: (context, snapshot) {
+                                              return TextButton(
+                                      onPressed: () => _launchEmail(snapshot.data.toString()),
+                                      child: Text(
+                                          snapshot.data.toString(),
+                                          style:
+                                              TextStyle(color: Colors.white)));
+                                            },                                            
+                                          ),
                                           SizedBox(
                                             width: 10,
                                           ),
@@ -599,7 +604,9 @@ class _ProyectScreenState extends State<ProyectScreen> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.grey[700],
         onPressed: () async {
-          await FirebaseMessaging.instance
+          bool documentoExiste = await _empresasFirebase.existeDocumento();
+          if (documentoExiste) {
+            await FirebaseMessaging.instance
               .subscribeToTopic('proyecto')
               .whenComplete(() async => await _empresasFirebase.updEmpresaFavoritos( widget.id.toString() ).whenComplete(() => ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -607,6 +614,10 @@ class _ProyectScreenState extends State<ProyectScreen> {
                       duration: Duration(seconds: 2),
                     ),
                   )));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Aun no creas tu empresa, accede a tu perfil')));
+          }
         },
         label: Text('Seguir proyecto'),
         icon: Icon(Icons.favorite),

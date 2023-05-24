@@ -80,8 +80,7 @@ class ProyectosFirebase {
   Future<String> obtenerIdPadreDesdeHijo(String hijoId) async {
     QuerySnapshot querySnapshot =
         await _proyectosCollection // Nombre de la subcolección "hijos"
-            !
-            .get();
+            !.get();
     for (QueryDocumentSnapshot documentoPrincipalSnapshot
         in querySnapshot.docs) {
       QuerySnapshot subcoleccionSnapshot = await documentoPrincipalSnapshot
@@ -95,5 +94,20 @@ class ProyectosFirebase {
       }
     }
     throw Exception('No se encontró el documento hijo en la colección.');
+  }
+
+  Future<String> obtenerCorreoPadreDesdeHijo(String hijoId) async {
+    final documentReference = _proyectosCollection!.doc(hijoId);
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+      .collection('empresas')
+      .where('proyectos', arrayContains: documentReference)
+      .get();
+
+  if (querySnapshot.docs.isNotEmpty) {
+    String correoDocumentoPrincipal = querySnapshot.docs.first.get('correo');
+    return correoDocumentoPrincipal;
+  } else {
+    throw Exception('No se encontró el documento hijo en la colección.');
+  }
   }
 }
