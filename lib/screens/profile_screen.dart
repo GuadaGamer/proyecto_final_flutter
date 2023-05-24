@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_app_web/Service/empresas_firebasa%20.dart';
+import 'package:firebase_app_web/Service/upload_document.dart';
 import 'package:firebase_app_web/Service/upload_image.dart';
 import 'package:firebase_app_web/pages/HomePage.dart';
 import 'package:firebase_app_web/responsive.dart';
@@ -21,10 +23,12 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   ValueNotifier<XFile?> image = ValueNotifier<XFile?>(null);
   ValueNotifier<bool> edit = ValueNotifier<bool>(false);
+  ValueNotifier<bool> documentUpload = ValueNotifier<bool>(false);
   final ImagePicker _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
   EmpresasFirebase _firebase = EmpresasFirebase();
   bool nuevo = false;
+  File? archivo; 
 
   final txtNameFact = TextEditingController();
   final txtDescFact = TextEditingController();
@@ -36,8 +40,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget textItem(
-        String labeltext, TextEditingController controller, int max, double ancho) {
+    Widget textItem(String labeltext, TextEditingController controller, int max,
+        double ancho) {
       return Container(
         width: ancho,
         height: max >= 2 ? 80 : 55,
@@ -48,6 +52,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             fontSize: 17,
             color: Colors.white,
           ),
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Campo requerido';
+            }
+            return null;
+          },
           decoration: InputDecoration(
             labelText: labeltext,
             labelStyle: TextStyle(
@@ -74,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(actions: [
+      appBar: AppBar(title: Text('Mi perfil'), actions: [
         IconButton(
             onPressed: () => edit.value = !edit.value, icon: Icon(Icons.edit)),
       ]),
@@ -151,37 +161,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       valueListenable: edit,
                                       builder: (context, value, child) {
                                         if (value) {
-                                          txtNameFact.text =
-                                              snapshot.data!.docs[0].get('nombre');
-                                          txtDescFact.text = snapshot.data!.docs[0]
+                                          txtNameFact.text = snapshot
+                                              .data!.docs[0]
+                                              .get('nombre');
+                                          txtDescFact.text = snapshot
+                                              .data!.docs[0]
                                               .get('descripción');
-                                          txtLocacionFact.text =
-                                              snapshot.data!.docs[0].get('pais');
+                                          txtLocacionFact.text = snapshot
+                                              .data!.docs[0]
+                                              .get('pais');
                                           txtRFCFact.text =
                                               snapshot.data!.docs[0].get('rfc');
-                                          txtTelFact.text = snapshot.data!.docs[0]
+                                          txtTelFact.text = snapshot
+                                              .data!.docs[0]
                                               .get('telefono')
                                               .toString();
-                                          txtRubroFact.text = snapshot.data!.docs[0]
+                                          txtRubroFact.text = snapshot
+                                              .data!.docs[0]
                                               .get('tipo_empresa');
                                           txtUrlFact.text =
                                               snapshot.data!.docs[0].get('url');
                                           return Column(
                                             children: [
-                                              textItem('Nombre', txtNameFact, 1, MediaQuery.of(context).size.width - 70),
+                                              textItem(
+                                                  'Nombre',
+                                                  txtNameFact,
+                                                  1,
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      70),
                                               SizedBox(
                                                 height: 10,
                                               ),
                                               textItem(
-                                                  'Descripción', txtDescFact, 5, MediaQuery.of(context).size.width - 70),
+                                                  'Descripción',
+                                                  txtDescFact,
+                                                  5,
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      70),
                                               SizedBox(
                                                 height: 10,
                                               ),
-                                              textItem('Pais', txtLocacionFact, 1, MediaQuery.of(context).size.width - 70),
+                                              textItem(
+                                                  'Pais',
+                                                  txtLocacionFact,
+                                                  1,
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      70),
                                               SizedBox(
                                                 height: 10,
                                               ),
-                                              textItem('RFC', txtRFCFact, 1, MediaQuery.of(context).size.width - 70),
+                                              textItem(
+                                                  'RFC',
+                                                  txtRFCFact,
+                                                  1,
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      70),
                                               SizedBox(
                                                 height: 10,
                                               ),
@@ -200,13 +242,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   },
                                                   controller: txtTelFact,
                                                   maxLines: 1,
-                                                  keyboardType: TextInputType.phone,
+                                                  keyboardType:
+                                                      TextInputType.phone,
                                                   style: TextStyle(
                                                     fontSize: 17,
                                                     color: Colors.white,
                                                   ),
                                                   decoration: InputDecoration(
-                                                    labelText: 'Numero de telefono',
+                                                    labelText:
+                                                        'Numero de telefono',
                                                     labelStyle: TextStyle(
                                                       fontSize: 17,
                                                       color: Colors.white,
@@ -214,7 +258,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     focusedBorder:
                                                         OutlineInputBorder(
                                                       borderRadius:
-                                                          BorderRadius.circular(15),
+                                                          BorderRadius.circular(
+                                                              15),
                                                       borderSide: BorderSide(
                                                         width: 1.5,
                                                         color: Colors.amber,
@@ -223,7 +268,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     enabledBorder:
                                                         OutlineInputBorder(
                                                       borderRadius:
-                                                          BorderRadius.circular(15),
+                                                          BorderRadius.circular(
+                                                              15),
                                                       borderSide: BorderSide(
                                                         width: 1,
                                                         color: Colors.grey,
@@ -235,12 +281,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               SizedBox(
                                                 height: 10,
                                               ),
-                                              textItem('Tipo de empresa',
-                                                  txtRubroFact, 2, MediaQuery.of(context).size.width - 70),
+                                              textItem(
+                                                  'Tipo de empresa',
+                                                  txtRubroFact,
+                                                  2,
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      70),
                                               SizedBox(
                                                 height: 10,
                                               ),
-                                              textItem('URL', txtUrlFact, 3, MediaQuery.of(context).size.width - 70),
+                                              textItem(
+                                                  'URL',
+                                                  txtUrlFact,
+                                                  3,
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      70),
                                               SizedBox(
                                                 height: 10,
                                               ),
@@ -261,8 +320,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   height: 10,
                                                 ),
                                                 Text(
-                                                    snapshot.data!.docs[0]
-                                                            .get('descripción') ??
+                                                    snapshot.data!.docs[0].get(
+                                                            'descripción') ??
                                                         'Sin desc',
                                                     style: TextStyle(
                                                         color: Colors.white,
@@ -272,14 +331,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.spaceEvenly,
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
                                                   children: [
                                                     Text(
                                                         snapshot.data!.docs[0]
                                                                 .get('pais') ??
                                                             'Sin pais',
                                                         style: TextStyle(
-                                                            color: Colors.white)),
+                                                            color:
+                                                                Colors.white)),
                                                     SizedBox(
                                                       width: 10,
                                                     ),
@@ -294,7 +355,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.spaceEvenly,
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
                                                   children: [
                                                     TextButton(
                                                         onPressed: () =>
@@ -302,11 +364,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                 .data!.docs[0]
                                                                 .get('correo')),
                                                         child: Text(
-                                                            snapshot.data!.docs[0]
+                                                            snapshot
+                                                                .data!.docs[0]
                                                                 .get('correo'),
                                                             style: TextStyle(
-                                                                color:
-                                                                    Colors.white))),
+                                                                color: Colors
+                                                                    .white))),
                                                     SizedBox(
                                                       width: 10,
                                                     ),
@@ -321,13 +384,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.spaceEvenly,
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
                                                   children: [
                                                     SelectableText(
                                                         snapshot.data!.docs[0]
                                                             .get('rfc'),
                                                         style: TextStyle(
-                                                            color: Colors.white)),
+                                                            color:
+                                                                Colors.white)),
                                                     SizedBox(
                                                       width: 10,
                                                     ),
@@ -342,23 +407,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.spaceEvenly,
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
                                                   children: [
                                                     TextButton(
                                                         onPressed: () =>
                                                             _launchCaller(snapshot
-                                                                    .data!.docs[0]
+                                                                    .data!
+                                                                    .docs[0]
                                                                     .get(
                                                                         'telefono') ??
                                                                 'Sin nombre'),
                                                         child: Text(
-                                                            snapshot.data!.docs[0]
+                                                            snapshot.data!
+                                                                    .docs[0]
                                                                     .get(
                                                                         'telefono') ??
                                                                 'Sin telefono',
                                                             style: TextStyle(
-                                                                color:
-                                                                    Colors.white))),
+                                                                color: Colors
+                                                                    .white))),
                                                     SizedBox(
                                                       width: 10,
                                                     ),
@@ -373,7 +441,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.spaceEvenly,
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
                                                   children: [
@@ -382,7 +451,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                 'tipo_empresa') ??
                                                             'Sin tipo',
                                                         style: TextStyle(
-                                                            color: Colors.white)),
+                                                            color:
+                                                                Colors.white)),
                                                     SizedBox(
                                                       width: 10,
                                                     ),
@@ -397,7 +467,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.spaceEvenly,
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
                                                   children: [
                                                     TextButton(
                                                         onPressed: () =>
@@ -409,12 +480,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                             'url') ??
                                                                     'Sin url')),
                                                         child: Text(
-                                                            snapshot.data!.docs[0]
-                                                                    .get('url') ??
+                                                            snapshot.data!
+                                                                    .docs[0]
+                                                                    .get(
+                                                                        'url') ??
                                                                 'Sin url',
                                                             style: TextStyle(
-                                                                color:
-                                                                    Colors.white))),
+                                                                color: Colors.white))),
                                                     SizedBox(
                                                       width: 10,
                                                     ),
@@ -430,21 +502,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             nuevo = true;
                                             return Column(
                                               children: [
-                                                textItem('Nombre', txtNameFact, 1,MediaQuery.of(context).size.width - 70),
+                                                textItem(
+                                                    'Nombre',
+                                                    txtNameFact,
+                                                    1,
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width -
+                                                        70),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
                                                 textItem(
-                                                    'Descripción', txtDescFact, 5, MediaQuery.of(context).size.width - 70),
+                                                    'Descripción',
+                                                    txtDescFact,
+                                                    5,
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width -
+                                                        70),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
                                                 textItem(
-                                                    'Pais', txtLocacionFact, 1, MediaQuery.of(context).size.width - 70),
+                                                    'Pais',
+                                                    txtLocacionFact,
+                                                    1,
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width -
+                                                        70),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                textItem('RFC', txtRFCFact, 1, MediaQuery.of(context).size.width - 70),
+                                                textItem(
+                                                    'RFC',
+                                                    txtRFCFact,
+                                                    1,
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width -
+                                                        70),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
@@ -479,8 +577,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       focusedBorder:
                                                           OutlineInputBorder(
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                15),
+                                                            BorderRadius
+                                                                .circular(15),
                                                         borderSide: BorderSide(
                                                           width: 1.5,
                                                           color: Colors.amber,
@@ -489,8 +587,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       enabledBorder:
                                                           OutlineInputBorder(
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                15),
+                                                            BorderRadius
+                                                                .circular(15),
                                                         borderSide: BorderSide(
                                                           width: 1,
                                                           color: Colors.grey,
@@ -502,15 +600,82 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                textItem('Tipo de empresa',
-                                                    txtRubroFact, 2, MediaQuery.of(context).size.width - 70),
+                                                textItem(
+                                                    'Tipo de empresa',
+                                                    txtRubroFact,
+                                                    2,
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width -
+                                                        70),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                textItem('URL', txtUrlFact, 3, MediaQuery.of(context).size.width - 70),
+                                                textItem(
+                                                    'URL',
+                                                    txtUrlFact,
+                                                    3,
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width -
+                                                        70),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
+                                                ValueListenableBuilder(
+                                          valueListenable: documentUpload, 
+                                          builder: (context, value, child) {
+                                            if (value){
+                                              return Text('Archivo subido: ${archivo!.path.split('/').last}', style: TextStyle(color: Colors.white), textAlign: TextAlign.center,);
+                                            }else {
+                                              return Column(
+                                                children: [
+                                                  Text('Sube tu constancia de situación fiscal', style: TextStyle(color: Colors.white), textAlign: TextAlign.center),
+                                                  SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  TextButton(
+                                          onPressed: () async {
+                                            FilePickerResult? result =
+                                                    await FilePicker.platform
+                                                        .pickFiles(
+                                                  type: FileType.custom,
+                                                  allowedExtensions: [
+                                                    'jpg',
+                                                    'pdf',
+                                                    'doc'
+                                                  ],
+                                            );
+                                            if (result != null) {
+                                                  archivo = File(
+                                                      result.files.single.path!);
+                                                  
+                                                  await uploadDocument(
+                                                          File(archivo!.path),
+                                                          txtRFCFact.text)
+                                                      .then((value) {
+                                                    if (value!.isNotEmpty) {
+                                                      documentUpload.value = true;
+                                                      ScaffoldMessenger.of(context)
+                                                          .showSnackBar(const SnackBar(
+                                                              content: Text(
+                                                                  'Archivo subido correctamente')));
+                                                    } else {
+                                                      ScaffoldMessenger.of(context)
+                                                          .showSnackBar(const SnackBar(
+                                                              content: Text(
+                                                                  'Error al subir el archivo')));
+                                                    }
+                                                  });
+                                                  // Llamar a la función para subir el archivo aquí
+                                            }
+                                          },
+                                          child: Text('Seleccionar archivo'),
+                                        ),
+                                                ],
+                                              );
+                                            }
+                                          },)
                                               ],
                                             );
                                           }
@@ -518,11 +683,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       })
                                   : Column(
                                       children: [
-                                        textItem('nombre', txtNameFact, 1,MediaQuery.of(context).size.width - 70),
+                                        textItem(
+                                            'nombre',
+                                            txtNameFact,
+                                            1,
+                                            MediaQuery.of(context).size.width -
+                                                70),
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        textItem('descripcion', txtDescFact, 5, MediaQuery.of(context).size.width - 70),
+                                        textItem(
+                                            'descripcion',
+                                            txtDescFact,
+                                            5,
+                                            MediaQuery.of(context).size.width -
+                                                70),
                                         SizedBox(
                                           height: 10,
                                         ),
@@ -530,7 +705,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            textItem('Pais', txtLocacionFact, 1, MediaQuery.of(context).size.width - 70),
+                                            textItem(
+                                                'Pais',
+                                                txtLocacionFact,
+                                                1,
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    70),
                                             SizedBox(
                                               width: 10,
                                             ),
@@ -572,7 +754,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            textItem('RFC', txtRFCFact, 1, MediaQuery.of(context).size.width - 70),
+                                            textItem(
+                                                'RFC',
+                                                txtRFCFact,
+                                                1,
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    70),
                                             SizedBox(
                                               width: 10,
                                             ),
@@ -589,7 +778,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            textItem('Telefono', txtTelFact, 1, MediaQuery.of(context).size.width - 70),
+                                            textItem(
+                                                'Telefono',
+                                                txtTelFact,
+                                                1,
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    70),
                                             SizedBox(
                                               width: 10,
                                             ),
@@ -609,7 +805,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               CrossAxisAlignment.center,
                                           children: [
                                             textItem(
-                                                'Tipo de empresa', txtRubroFact, 2, MediaQuery.of(context).size.width - 70),
+                                                'Tipo de empresa',
+                                                txtRubroFact,
+                                                2,
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    70),
                                             SizedBox(
                                               width: 10,
                                             ),
@@ -626,7 +828,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            textItem('Url', txtUrlFact, 2, MediaQuery.of(context).size.width - 70),
+                                            textItem(
+                                                'Url',
+                                                txtUrlFact,
+                                                2,
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    70),
                                             SizedBox(
                                               width: 10,
                                             ),
@@ -728,25 +937,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       SizedBox(
                                         height: 20,
                                       ),
-                                      textItem('Nombre', txtNameFact, 1, MediaQuery.of(context).size.width / 2 ),
+                                      textItem(
+                                          'Nombre',
+                                          txtNameFact,
+                                          1,
+                                          MediaQuery.of(context).size.width /
+                                              2),
                                       SizedBox(
                                         height: 10,
                                       ),
-                                      textItem('Descripción', txtDescFact, 5, MediaQuery.of(context).size.width / 2),
+                                      textItem(
+                                          'Descripción',
+                                          txtDescFact,
+                                          5,
+                                          MediaQuery.of(context).size.width /
+                                              2),
                                       SizedBox(
                                         height: 10,
                                       ),
-                                      textItem('Pais', txtLocacionFact, 1, MediaQuery.of(context).size.width / 2),
+                                      textItem(
+                                          'Pais',
+                                          txtLocacionFact,
+                                          1,
+                                          MediaQuery.of(context).size.width /
+                                              2),
                                       SizedBox(
                                         height: 10,
                                       ),
-                                      textItem('RFC', txtRFCFact, 1, MediaQuery.of(context).size.width / 2),
+                                      textItem(
+                                          'RFC',
+                                          txtRFCFact,
+                                          1,
+                                          MediaQuery.of(context).size.width /
+                                              2),
                                       SizedBox(
                                         height: 10,
                                       ),
                                       Container(
                                         width:
-                                            MediaQuery.of(context).size.width / 2,
+                                            MediaQuery.of(context).size.width /
+                                                2,
                                         height: 1 >= 2 ? 80 : 55,
                                         child: TextFormField(
                                           validator: (value) {
@@ -791,11 +1021,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         height: 10,
                                       ),
                                       textItem(
-                                          'Tipo de empresa', txtRubroFact, 2, MediaQuery.of(context).size.width / 2),
+                                          'Tipo de empresa',
+                                          txtRubroFact,
+                                          2,
+                                          MediaQuery.of(context).size.width /
+                                              2),
                                       SizedBox(
                                         height: 10,
                                       ),
-                                      textItem('URL', txtUrlFact, 3, MediaQuery.of(context).size.width / 2),
+                                      textItem(
+                                          'URL',
+                                          txtUrlFact,
+                                          3,
+                                          MediaQuery.of(context).size.width /
+                                              2),
                                       SizedBox(
                                         height: 10,
                                       ),
@@ -804,7 +1043,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 } else {
                                   if (snapshot.data!.size > 0) {
                                     return Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Text(
                                             snapshot.data!.docs[0]
@@ -976,24 +1216,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     nuevo = true;
                                     return Column(
                                       children: [
-                                        textItem('Nombre', txtNameFact, 1, MediaQuery.of(context).size.width / 2),
+                                        textItem(
+                                            'Nombre',
+                                            txtNameFact,
+                                            1,
+                                            MediaQuery.of(context).size.width /
+                                                2),
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        textItem('Descripción', txtDescFact, 5, MediaQuery.of(context).size.width / 2),
+                                        textItem(
+                                            'Descripción',
+                                            txtDescFact,
+                                            5,
+                                            MediaQuery.of(context).size.width /
+                                                2),
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        textItem('Pais', txtLocacionFact, 1, MediaQuery.of(context).size.width / 2),
+                                        textItem(
+                                            'Pais',
+                                            txtLocacionFact,
+                                            1,
+                                            MediaQuery.of(context).size.width /
+                                                2),
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        textItem('RFC', txtRFCFact, 1, MediaQuery.of(context).size.width / 2),
+                                        textItem(
+                                            'RFC',
+                                            txtRFCFact,
+                                            1,
+                                            MediaQuery.of(context).size.width /
+                                                2),
                                         SizedBox(
                                           height: 10,
                                         ),
                                         Container(
-                                          width: MediaQuery.of(context).size.width / 2,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2,
                                           height: 1 >= 2 ? 80 : 55,
                                           child: TextFormField(
                                             validator: (value) {
@@ -1038,14 +1301,82 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           height: 10,
                                         ),
                                         textItem(
-                                            'Tipo de empresa', txtRubroFact, 2, MediaQuery.of(context).size.width / 2),
+                                            'Tipo de empresa',
+                                            txtRubroFact,
+                                            2,
+                                            MediaQuery.of(context).size.width /
+                                                2),
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        textItem('URL', txtUrlFact, 3, MediaQuery.of(context).size.width / 2),
+                                        textItem(
+                                            'URL',
+                                            txtUrlFact,
+                                            3,
+                                            MediaQuery.of(context).size.width /
+                                                2),
                                         SizedBox(
                                           height: 10,
                                         ),
+                                        ValueListenableBuilder(
+                                          valueListenable: documentUpload, 
+                                          builder: (context, value, child) {
+                                            if (value){
+                                              return Container(
+                                                width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2,
+                                              height: 60,
+                                                child: Text('Archivo subido: ${archivo!.path.split('/').last}', style: TextStyle(color: Colors.white), textAlign: TextAlign.center));
+                                            }else {
+                                              return Column(
+                                                children: [
+                                                  Text('Sube tu constancia de situación fiscal', style: TextStyle(color: Colors.white), textAlign: TextAlign.center),
+                                                  SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  TextButton(
+                                          onPressed: () async {
+                                            FilePickerResult? result =
+                                                    await FilePicker.platform
+                                                        .pickFiles(
+                                                  type: FileType.custom,
+                                                  allowedExtensions: [
+                                                    'jpg',
+                                                    'pdf',
+                                                    'doc'
+                                                  ],
+                                            );
+                                            if (result != null) {
+                                                  archivo = File(
+                                                      result.files.single.path!);
+                                                  await uploadDocument(
+                                                          File(archivo!.path),
+                                                          txtRFCFact.text)
+                                                      .then((value) {
+                                                    if (value!.isNotEmpty) {
+                                                      documentUpload.value = true;
+                                                      ScaffoldMessenger.of(context)
+                                                          .showSnackBar(const SnackBar(
+                                                              content: Text(
+                                                                  'Archivo subido correctamente')));
+                                                    } else {
+                                                      ScaffoldMessenger.of(context)
+                                                          .showSnackBar(const SnackBar(
+                                                              content: Text(
+                                                                  'Error al subir el archivo')));
+                                                    }
+                                                  });
+                                                  // Llamar a la función para subir el archivo aquí
+                                            }
+                                          },
+                                          child: Text('Seleccionar archivo'),
+                                        ),
+                                                ],
+                                              );
+                                            }
+                                          },)
                                       ],
                                     );
                                   }
@@ -1053,11 +1384,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               })
                           : Column(
                               children: [
-                                textItem('nombre', txtNameFact, 1, MediaQuery.of(context).size.width / 2),
+                                textItem('nombre', txtNameFact, 1,
+                                    MediaQuery.of(context).size.width / 2),
                                 SizedBox(
                                   height: 10,
                                 ),
-                                textItem('descripcion', txtDescFact, 5, MediaQuery.of(context).size.width / 2),
+                                textItem('descripcion', txtDescFact, 5,
+                                    MediaQuery.of(context).size.width / 2),
                                 SizedBox(
                                   height: 10,
                                 ),
@@ -1065,7 +1398,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    textItem('Pais', txtLocacionFact, 1, MediaQuery.of(context).size.width / 2),
+                                    textItem('Pais', txtLocacionFact, 1,
+                                        MediaQuery.of(context).size.width / 2),
                                     SizedBox(
                                       width: 10,
                                     ),
@@ -1107,7 +1441,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    textItem('RFC', txtRFCFact, 1, MediaQuery.of(context).size.width / 2),
+                                    textItem('RFC', txtRFCFact, 1,
+                                        MediaQuery.of(context).size.width / 2),
                                     SizedBox(
                                       width: 10,
                                     ),
@@ -1124,7 +1459,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    textItem('Telefono', txtTelFact, 1, MediaQuery.of(context).size.width / 2),
+                                    textItem('Telefono', txtTelFact, 1,
+                                        MediaQuery.of(context).size.width / 2),
                                     SizedBox(
                                       width: 10,
                                     ),
@@ -1142,8 +1478,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    textItem(
-                                        'Tipo de empresa', txtRubroFact, 2, MediaQuery.of(context).size.width / 2),
+                                    textItem('Tipo de empresa', txtRubroFact, 2,
+                                        MediaQuery.of(context).size.width / 2),
                                     SizedBox(
                                       width: 10,
                                     ),
@@ -1160,7 +1496,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    textItem('Url', txtUrlFact, 2, MediaQuery.of(context).size.width / 2),
+                                    textItem('Url', txtUrlFact, 2,
+                                        MediaQuery.of(context).size.width / 2),
                                     SizedBox(
                                       width: 10,
                                     ),
@@ -1180,11 +1517,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartDocked,
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniStartDocked,
       floatingActionButton: FloatingActionButton.extended(
           backgroundColor: Colors.grey[700],
           onPressed: () async {
-            if (_formKey.currentState!.validate()) {
+            if (_formKey.currentState!.validate() && documentUpload.value) {
               if (image.value != null) {
                 final uploaded = await uploadImage(File(image.value!.path));
                 await FirebaseAuth.instance.currentUser

@@ -120,7 +120,8 @@ class CardApi extends StatelessWidget {
           ),
           Positioned(
             bottom: 30,
-            left: 350,
+            left: 0,
+            right: 0,
             child: data.icono)
         ],
       ),

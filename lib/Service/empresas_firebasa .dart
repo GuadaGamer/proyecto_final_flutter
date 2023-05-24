@@ -30,12 +30,12 @@ class EmpresasFirebase {
     var query = _empresasCollection!
         .where('correo', isEqualTo: FirebaseAuth.instance.currentUser!.email!);
     var snapshot = await query.get();
-     print('here');
     var referenciaEliminar = proyectosCollection!.doc(ids);
     if (snapshot.size > 0) {
-     
       var docRef = snapshot.docs[0].reference;
-      return await docRef.update({'proyectos': FieldValue.arrayRemove([referenciaEliminar])});
+      return await docRef.update({
+        'proyectos': FieldValue.arrayRemove([referenciaEliminar])
+      });
     }
   }
 
@@ -47,6 +47,32 @@ class EmpresasFirebase {
       var docRef = snapshot.docs[0].reference;
       await docRef.update({
         'proyectos':
+            FieldValue.arrayUnion([proyectosCollection?.doc(idproyecto)])
+      });
+    }
+  }
+
+  Future<void> updArrayFavoritos(String ids) async {
+    var query = _empresasCollection!
+        .where('correo', isEqualTo: FirebaseAuth.instance.currentUser!.email!);
+    var snapshot = await query.get();
+    var referenciaEliminar = proyectosCollection!.doc(ids);
+    if (snapshot.size > 0) {
+      var docRef = snapshot.docs[0].reference;
+      return await docRef.update({
+        'favoritos': FieldValue.arrayRemove([referenciaEliminar])
+      });
+    }
+  }
+
+  Future<void> updEmpresaFavoritos(String idproyecto) async {
+    var query = _empresasCollection!
+        .where('correo', isEqualTo: FirebaseAuth.instance.currentUser!.email!);
+    var snapshot = await query.get();
+    if (snapshot.size > 0) {
+      var docRef = snapshot.docs[0].reference;
+      await docRef.update({
+        'favoritos':
             FieldValue.arrayUnion([proyectosCollection?.doc(idproyecto)])
       });
     }
@@ -67,18 +93,45 @@ class EmpresasFirebase {
   }
 
   Future<List<String>> getDocumentReferences() async {
-    QuerySnapshot querySnapshot =
-        await _empresasCollection!.where('correo', isEqualTo: FirebaseAuth.instance.currentUser!.email).get();
+    QuerySnapshot querySnapshot = await _empresasCollection!
+        .where('correo', isEqualTo: FirebaseAuth.instance.currentUser!.email)
+        .get();
     if (querySnapshot.docs.isEmpty) {
       return List.empty();
     }
     DocumentSnapshot snapshot = querySnapshot.docs.first;
     Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-    if(data.containsKey('proyectos')){
+    if (data.containsKey('proyectos')) {
       List<DocumentReference> references = List.from(snapshot.get('proyectos'));
       List<String> ids = references.map((e) => e.id).toList();
       return ids;
     }
-    return  List.empty();
+    return List.empty();
+  }
+
+  Future<List<String>> getFavoriteReferences() async {
+    QuerySnapshot querySnapshot = await _empresasCollection!
+        .where('correo', isEqualTo: FirebaseAuth.instance.currentUser!.email)
+        .get();
+    if (querySnapshot.docs.isEmpty) {
+      return List.empty();
+    }
+    DocumentSnapshot snapshot = querySnapshot.docs.first;
+    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+    if (data.containsKey('favoritos')) {
+      List<DocumentReference> references = List.from(snapshot.get('favoritos'));
+      List<String> ids = references.map((e) => e.id).toList();
+      return ids;
+    }
+    return List.empty();
+  }
+
+  Future<bool> existeDocumento() async {
+    QuerySnapshot querySnapshot = await _empresasCollection!
+        .where('correo', isEqualTo: FirebaseAuth.instance.currentUser!.email)
+        .limit(1)
+        .get();
+
+    return querySnapshot.docs.isNotEmpty;
   }
 }

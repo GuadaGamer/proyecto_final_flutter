@@ -251,10 +251,8 @@ class AddProyectScreen extends StatelessWidget {
 
   Future<bool> launchURL(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
-      print('si');
       return true;
     } else {
-      print('no');
       return false;
     }
   }

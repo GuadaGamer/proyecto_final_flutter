@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_app_web/Service/empresas_firebasa%20.dart';
 import 'package:firebase_app_web/Service/publicaciones_firebasa.dart';
 import 'package:firebase_app_web/responsive.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,6 +21,7 @@ class ProyectScreen extends StatefulWidget {
 
 class _ProyectScreenState extends State<ProyectScreen> {
   ProyectosFirebase _firebase = ProyectosFirebase();
+  final EmpresasFirebase _empresasFirebase = EmpresasFirebase();
   TextEditingController txtValor = TextEditingController();
   ValueNotifier<bool> inversion = ValueNotifier<bool>(false);
 
@@ -599,12 +601,12 @@ class _ProyectScreenState extends State<ProyectScreen> {
         onPressed: () async {
           await FirebaseMessaging.instance
               .subscribeToTopic('proyecto')
-              .whenComplete(() => ScaffoldMessenger.of(context).showSnackBar(
+              .whenComplete(() async => await _empresasFirebase.updEmpresaFavoritos( widget.id.toString() ).whenComplete(() => ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Nueva subscripcion activa'),
                       duration: Duration(seconds: 2),
                     ),
-                  ));
+                  )));
         },
         label: Text('Seguir proyecto'),
         icon: Icon(Icons.favorite),

@@ -8,7 +8,6 @@ final FirebaseStorage storage = FirebaseStorage.instance;
 
 Future<bool> uploadImage(File image) async {
   final imageName = DateTime.now();
-  print(image.path);
   
   imagePath = "/users/${FirebaseAuth.instance.currentUser?.email}/$imageName.jpg";
   Reference ref = storage.ref().child(imagePath);
@@ -16,7 +15,7 @@ Future<bool> uploadImage(File image) async {
   ListResult list = await FirebaseStorage.instance.ref().child("/users/${FirebaseAuth.instance.currentUser?.email}/").listAll();
   List<Reference> items = list.items;
   for (Reference item in items) {
-   print(item); 
+  
    await item.delete();
   }
   

@@ -9,7 +9,6 @@ Future<String> profilePhoto() async {
 
   // Obtener la URL de descarga
   String downloadURL = await ref.getDownloadURL();
-  print(downloadURL);
   return downloadURL;
 
   // Ahora puedes usar la URL de descarga para mostrar la imagen en tu aplicación

@@ -1,6 +1,7 @@
 import 'package:firebase_app_web/pages/HomePage.dart';
 import 'package:firebase_app_web/screens/add_proyecto_screen.dart';
 import 'package:firebase_app_web/screens/empresaproyect.dart';
+import 'package:firebase_app_web/screens/favorite_proyect.dart';
 import 'package:firebase_app_web/screens/inversiones_screen.dart';
 import 'package:firebase_app_web/screens/proyect_screen.dart';
 import 'package:firebase_app_web/screens/themeSelectror_screen.dart';
@@ -14,5 +15,6 @@ Map<String, WidgetBuilder> getApplicationRoutes() {
       '/investment': (BuildContext context) => InversionesScreen(),
       '/theme': (BuildContext context) => const ThemeSelectorScreen(),
       '/item': (BuildContext context) => ProyectScreen(),
+      '/favorit': (BuildContext context) => ListProyectosFavoritos(),
   };
 }

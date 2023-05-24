@@ -27,7 +27,7 @@ class PushNotificationProvider {
   static Future _onMessageHandler(RemoteMessage message) async{
     //print('onMessage Handler ${ message.messageId}');
 
-    print( message.data );
+    //print( message.data );
 
     String argumento = 'no-data';
     if (Platform.isAndroid){
@@ -51,7 +51,7 @@ class PushNotificationProvider {
   static Future initNotifications() async {
     await Firebase.initializeApp();
     token = await messaging.getToken();
-    print(token);
+    //print(token);
     //eTGGdHEcTg-SGqnG75ep-8:APA91bEl-NCxl2eiXFOcsQQeNEqSCd4A8xabT4Jy4O2Pm1qolrxG4IzhVqAv2F0R1ySuOPnazuZVjubtTXTasub_hzRtRucy0EW2YDS_XKfnTr_jR_-GaPJLFPPbWJi7tW100GV2t1et
 
     //handlers

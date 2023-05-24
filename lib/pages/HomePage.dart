@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_app_web/Service/Auth_Service.dart';
+import 'package:firebase_app_web/Service/empresas_firebasa%20.dart';
 import 'package:firebase_app_web/main.dart';
 import 'package:firebase_app_web/providers/islogin_provider.dart';
 import 'package:firebase_app_web/screens/list_proyectos.dart';
@@ -40,6 +41,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     FlagsProvider flag = Provider.of<FlagsProvider>(context);
+    EmpresasFirebase _firebaseEmpresa = EmpresasFirebase();
 
     flag.getflagListPost();
 
@@ -66,19 +68,19 @@ class _HomePageState extends State<HomePage> {
               builder: (context, value, child) {
                 return UserAccountsDrawerHeader(
                     currentAccountPicture: ClipRRect(
-                      child: FirebaseAuth.instance.currentUser!.photoURL == null ?
-                        Image.asset('assets/profile.png')
-                      :FirebaseAuth.instance.currentUser!.photoURL!
-                                  .contains('firebasestorage') ==
-                              true
-                          ? CachedNetworkImage(
-                              fit: BoxFit.fitWidth,
-                              placeholder: ((context, url) =>
-                                  Image.asset('assets/loading.gif')),
-                              imageUrl: 
-                                  FirebaseAuth.instance.currentUser!.photoURL!,
-                            )
-                          : Image.asset('assets/profile.png'),
+                      child: FirebaseAuth.instance.currentUser!.photoURL == null
+                          ? Image.asset('assets/profile.png')
+                          : FirebaseAuth.instance.currentUser!.photoURL!
+                                      .contains('firebasestorage') ==
+                                  true
+                              ? CachedNetworkImage(
+                                  fit: BoxFit.fitWidth,
+                                  placeholder: ((context, url) =>
+                                      Image.asset('assets/loading.gif')),
+                                  imageUrl: FirebaseAuth
+                                      .instance.currentUser!.photoURL!,
+                                )
+                              : Image.asset('assets/profile.png'),
                     ),
                     accountName: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -92,7 +94,8 @@ class _HomePageState extends State<HomePage> {
                     accountEmail: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text(FirebaseAuth.instance.currentUser!.displayName ?? 'Sin nombre'),
+                          Text(FirebaseAuth.instance.currentUser!.displayName ??
+                              'Sin nombre'),
                           Icon(
                             Icons.account_circle,
                             color: Colors.white,
@@ -120,9 +123,20 @@ class _HomePageState extends State<HomePage> {
             },
             iconColor: Colors.grey,
             textColor: Colors.grey,
-            title: const Text('Mis publicaciones'),
-            subtitle: const Text('Ve aqui tus publicaciones'),
+            title: const Text('Mis proyectos'),
+            subtitle: const Text('Ve aqui tus proyectos'),
             leading: const Icon(Icons.my_library_books),
+            trailing: const Icon(Icons.chevron_right),
+          ),
+          ListTile(
+            onTap: () {
+              Navigator.pushNamed(context, '/favorit');
+            },
+            iconColor: Colors.grey,
+            textColor: Colors.grey,
+            title: const Text('Mis favoritos'),
+            subtitle: const Text('Ve aqui tus favoritos'),
+            leading: const Icon(Icons.favorite),
             trailing: const Icon(Icons.chevron_right),
           ),
           ListTile(
@@ -150,10 +164,14 @@ class _HomePageState extends State<HomePage> {
         ],
       )),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.pushNamed(context, '/add').then((value) {
-            
-          });
+        onPressed: () async {
+          bool documentoExiste = await _firebaseEmpresa.existeDocumento();
+          if (documentoExiste) {
+            Navigator.pushNamed(context, '/add').then((value) {});
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Aun no creas tu empresa, accede a tu perfil')));
+          }
         },
         backgroundColor: Colors.green[800],
         label: const Text('Añadir proyecto'),

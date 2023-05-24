@@ -8,14 +8,14 @@ import 'package:firebase_app_web/widgets/item_publicacion.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ListProyectosEmpresa extends StatefulWidget {
-  const ListProyectosEmpresa({super.key});
+class ListProyectosFavoritos extends StatefulWidget {
+  const ListProyectosFavoritos({super.key});
 
   @override
-  State<ListProyectosEmpresa> createState() => _ListProyectosEmpresaState();
+  State<ListProyectosFavoritos> createState() => _ListProyectosFavoritosState();
 }
 
-class _ListProyectosEmpresaState extends State<ListProyectosEmpresa> {
+class _ListProyectosFavoritosState extends State<ListProyectosFavoritos> {
   ProyectosFirebase _firebase = ProyectosFirebase();
   EmpresasFirebase _firebaseEmpresa = EmpresasFirebase();
 
@@ -27,10 +27,10 @@ class _ListProyectosEmpresaState extends State<ListProyectosEmpresa> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mis proyectos'),
+        title: Text('Mis Favoritos'),
       ),
       body: FutureBuilder<List<String>>(
-        future: _firebaseEmpresa.getDocumentReferences(),
+        future: _firebaseEmpresa.getFavoriteReferences(),
         builder: (context, AsyncSnapshot<List<String>> snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!.length <= 0) {
@@ -46,8 +46,8 @@ class _ListProyectosEmpresaState extends State<ListProyectosEmpresa> {
               mobile: GridView.builder(
                 padding: const EdgeInsets.all(7),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: .8,
+                    crossAxisCount: 1,
+                    childAspectRatio: 1.8,
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10),
                 itemCount: docIDs.length,
@@ -77,7 +77,7 @@ class _ListProyectosEmpresaState extends State<ListProyectosEmpresa> {
                                         querySnapshot['total_requerido']),
                                 Positioned(
                                   top: 5,
-                                  right: 10,
+                                  right: 15,
                                   child: IconButton(
                                       onPressed: () {
                                         showDialog(
@@ -86,18 +86,16 @@ class _ListProyectosEmpresaState extends State<ListProyectosEmpresa> {
                                               title: const Text(
                                                   'Confirmar borrado'),
                                               content: const Text(
-                                                  'Deseas borrar el proyecto?'),
+                                                  'Deseas dejar de seguir el proyecto?'),
                                               actions: [
                                                 TextButton(
                                                     onPressed: () async {
                                                       await _firebaseEmpresa
-                                                          .updArrayEmpresa(
+                                                          .updArrayFavoritos(
                                                               docIDs[index]);
-                                                      _firebase.delProyecto(
-                                                          docIDs[index]);
                                                       flag.setflagListPost();
                                                       Navigator.pushNamed(
-                                                          context, '/publish');
+                                                          context, '/favorit');
                                                     },
                                                     child: const Text('Si')),
                                                 TextButton(
@@ -109,7 +107,7 @@ class _ListProyectosEmpresaState extends State<ListProyectosEmpresa> {
                                         );
                                       },
                                       icon: Icon(
-                                        Icons.delete_forever,
+                                        Icons.heart_broken,
                                         color: Colors.white,
                                         size: 50,
                                       )),
@@ -175,13 +173,11 @@ class _ListProyectosEmpresaState extends State<ListProyectosEmpresa> {
                                                 TextButton(
                                                     onPressed: () async {
                                                       await _firebaseEmpresa
-                                                          .updArrayEmpresa(
+                                                          .updArrayFavoritos(
                                                               docIDs[index]);
-                                                      _firebase.delProyecto(
-                                                          docIDs[index]);
                                                       flag.setflagListPost();
                                                       Navigator.pushNamed(
-                                                          context, '/publish');
+                                                          context, '/favorit');
                                                     },
                                                     child: const Text('Si')),
                                                 TextButton(
@@ -193,7 +189,7 @@ class _ListProyectosEmpresaState extends State<ListProyectosEmpresa> {
                                         );
                                       },
                                       icon: Icon(
-                                        Icons.delete_forever,
+                                        Icons.heart_broken,
                                         color: Colors.white,
                                         size: 50,
                                       )),

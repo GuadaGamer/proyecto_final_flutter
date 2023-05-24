@@ -76,7 +76,6 @@ class OnboardingScreen extends StatelessWidget {
 
   checkLogin() async {
     String? tokne = await authClass.getToken();
-    print(tokne);
     if (tokne != null){
         currentPage.value = HomePage();
     }

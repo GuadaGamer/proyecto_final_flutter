@@ -251,7 +251,6 @@ class _SignInPageState extends State<SignInPage> {
           firebase_auth.UserCredential userCredential =
               await firebaseAuth.signInWithEmailAndPassword(
                   email: _emailController.text, password: _pwdController.text);
-          print(userCredential.user!.email);
           circular.value = false;
           firebaseAuth.currentUser!.emailVerified ?
                   Navigator.pushAndRemoveUntil(

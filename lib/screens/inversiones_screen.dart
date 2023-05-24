@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_web/Service/publicaciones_firebasa.dart';
+import 'package:firebase_app_web/screens/proyect_screen.dart';
 import 'package:firebase_app_web/widgets/firebaseBarChart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +15,9 @@ class InversionesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text('Mis inversiones'),
+      ),
       body: StreamBuilder(
         stream: _firebase.getAllDonations(),
         builder: (context, snapshot) {
@@ -29,7 +32,6 @@ class InversionesScreen extends StatelessWidget {
                             DateTime.fromMillisecondsSinceEpoch(milli);
                         String formattedDate =
                             DateFormat('y-dd-MM').format(trsData);
-                            print(formattedDate);
                     total = total + element.get('cuanto').toDouble();
                     if ( chartData.isEmpty){
                       chartData.add(new ChartData(formattedDate, element.get('cuanto').toDouble()));
@@ -69,6 +71,10 @@ class InversionesScreen extends StatelessWidget {
                         String formattedDate =
                             DateFormat('kk:mm:ss EEE d MMM').format(trsData);
                         return ListTile(
+                          onTap: () async {
+                            String idPadre = await _firebase.obtenerIdPadreDesdeHijo(documents[index].id).whenComplete(() => null);
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ProyectScreen(id: idPadre)));
+                          },
                           title: Text(documents[index].get('cuanto').toString(), style: TextStyle(color: Colors.white),),
                           subtitle: Text(formattedDate, style: TextStyle(color: Colors.white),),
                         );

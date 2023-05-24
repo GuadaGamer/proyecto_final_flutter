@@ -45,11 +45,18 @@ class Streammovile extends StatelessWidget {
       stream: _firebase.getAllProyecto(),
       builder: (context, snapshot) {
         if(snapshot.hasData){
+            if (snapshot.data!.size <= 0) {
+              return Center(
+                  child: Text(
+                'No hay proyectos disponibles',
+                style: TextStyle(color: Colors.white),
+              ));
+            }
           return GridView.builder(
             padding: const EdgeInsets.all(10),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1,
+              crossAxisCount: 1,
+              childAspectRatio: 1.7,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10), 
             itemCount: snapshot.data!.size,

@@ -208,7 +208,6 @@ class _SignUpPageState extends State<SignUpPage> {
           firebase_auth.UserCredential userCredential =
               await firebaseAuth.createUserWithEmailAndPassword(
                   email: _emailController.text, password: _pwdController.text);
-          print(userCredential.user!.email);
           userCredential.user!.sendEmailVerification();
           circular.value = false;
           Navigator.pushAndRemoveUntil(
