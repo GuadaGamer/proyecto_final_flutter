@@ -3,7 +3,7 @@ import 'package:firebase_app_web/Service/empresas_firebasa%20.dart';
 import 'package:firebase_app_web/Service/publicaciones_firebasa.dart';
 import 'package:firebase_app_web/providers/islogin_provider.dart';
 import 'package:firebase_app_web/responsive.dart';
-import 'package:firebase_app_web/screens/proyect_screen_edit.dart';
+import 'package:firebase_app_web/screens/proyect_screen.dart';
 import 'package:firebase_app_web/widgets/item_publicacion.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +36,7 @@ class _ListProyectosFavoritosState extends State<ListProyectosFavoritos> {
             if (snapshot.data!.length <= 0) {
               return Center(
                   child: Text(
-                'No hay proyectos en facoritos',
+                'No hay proyectos en favoritos',
                 style: TextStyle(color: Colors.white),
               ));
             }
@@ -63,7 +63,7 @@ class _ListProyectosFavoritosState extends State<ListProyectosFavoritos> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ProyectScreenEdit(
+                                      builder: (context) => ProyectScreen(
                                           id: docIDs[index])));
                             },
                             child: Stack(
@@ -145,7 +145,7 @@ class _ListProyectosFavoritosState extends State<ListProyectosFavoritos> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ProyectScreenEdit(
+                                      builder: (context) => ProyectScreen(
                                           id: docIDs[index])));
                             },
                             child: Stack(
