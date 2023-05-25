@@ -1522,23 +1522,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       floatingActionButton: FloatingActionButton.extended(
           backgroundColor: Colors.grey[700],
           onPressed: () async {
-            if (_formKey.currentState!.validate() && documentUpload.value) {
-              if (image.value != null) {
+            if(nuevo){
+              if (_formKey.currentState!.validate() && documentUpload.value) {
+                if (image.value != null) {
                 final uploaded = await uploadImage(File(image.value!.path));
                 await FirebaseAuth.instance.currentUser
                     ?.updateDisplayName(txtNameFact.text);
-                nuevo
-                    ? _firebase.insEmpresa({
+                    _firebase.insEmpresa({
                         'correo': FirebaseAuth.instance.currentUser!.email,
-                        'nombre': txtNameFact.text,
-                        'descripción': txtDescFact.text,
-                        'pais': txtLocacionFact.text,
-                        'rfc': txtRFCFact.text,
-                        'telefono': txtTelFact.text,
-                        'tipo_empresa': txtRubroFact.text,
-                        'url': txtUrlFact.text,
-                      })
-                    : _firebase.updEmpresa({
                         'nombre': txtNameFact.text,
                         'descripción': txtDescFact.text,
                         'pais': txtLocacionFact.text,
@@ -1557,8 +1548,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               } else {
                 await FirebaseAuth.instance.currentUser
                     ?.updateDisplayName(txtNameFact.text);
-                nuevo
-                    ? _firebase.insEmpresa({
+                  _firebase.insEmpresa({
                         'correo': FirebaseAuth.instance.currentUser!.email,
                         'nombre': txtNameFact.text,
                         'descripción': txtDescFact.text,
@@ -1567,8 +1557,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         'telefono': txtTelFact.text,
                         'tipo_empresa': txtRubroFact.text,
                         'url': txtUrlFact.text,
-                      })
-                    : _firebase.updEmpresa({
+                      });
+              }
+              imageChange.value = !imageChange.value;
+              Navigator.pop(context);
+              }
+            }else{
+if (image.value != null) {
+                final uploaded = await uploadImage(File(image.value!.path));
+                await FirebaseAuth.instance.currentUser
+                    ?.updateDisplayName(txtNameFact.text);
+                 _firebase.updEmpresa({
+                        'nombre': txtNameFact.text,
+                        'descripción': txtDescFact.text,
+                        'pais': txtLocacionFact.text,
+                        'rfc': txtRFCFact.text,
+                        'telefono': txtTelFact.text,
+                        'tipo_empresa': txtRubroFact.text,
+                        'url': txtUrlFact.text,
+                      });
+                if (uploaded) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Imagen subida correctamente')));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Error al subir la imagen')));
+                }
+              } else {
+                await FirebaseAuth.instance.currentUser
+                    ?.updateDisplayName(txtNameFact.text);
+                 _firebase.updEmpresa({
                         'nombre': txtNameFact.text,
                         'descripción': txtDescFact.text,
                         'pais': txtLocacionFact.text,
