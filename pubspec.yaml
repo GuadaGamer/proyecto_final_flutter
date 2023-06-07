@@ -51,6 +51,7 @@ dependencies:
   concentric_transition: ^1.0.3
   syncfusion_flutter_charts: ^21.2.6
   file_picker: ^5.3.1
+  syncfusion_flutter_pdfviewer: ^21.2.9
 
 dev_dependencies:
   flutter_test:

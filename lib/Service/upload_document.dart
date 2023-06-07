@@ -24,7 +24,7 @@ Future<String?> uploadDocument(File archivo, String rfcSH) async {
 
   final TaskSnapshot snapshot = await uploadTask.whenComplete(() => true);
 
-   String downloadURL = await ref.getDownloadURL();
+  String downloadURL = await ref.getDownloadURL();
 
   if(snapshot.state == TaskState.success){
     return downloadURL;

@@ -28,7 +28,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   EmpresasFirebase _firebase = EmpresasFirebase();
   bool nuevo = false;
-  File? archivo; 
+  File? archivo;
+  var linkDoc;
 
   final txtNameFact = TextEditingController();
   final txtDescFact = TextEditingController();
@@ -623,59 +624,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   height: 10,
                                                 ),
                                                 ValueListenableBuilder(
-                                          valueListenable: documentUpload, 
-                                          builder: (context, value, child) {
-                                            if (value){
-                                              return Text('Archivo subido: ${archivo!.path.split('/').last}', style: TextStyle(color: Colors.white), textAlign: TextAlign.center,);
-                                            }else {
-                                              return Column(
-                                                children: [
-                                                  Text('Sube tu constancia de situación fiscal', style: TextStyle(color: Colors.white), textAlign: TextAlign.center),
-                                                  SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                  TextButton(
-                                          onPressed: () async {
-                                            FilePickerResult? result =
-                                                    await FilePicker.platform
-                                                        .pickFiles(
-                                                  type: FileType.custom,
-                                                  allowedExtensions: [
-                                                    'jpg',
-                                                    'pdf',
-                                                    'doc'
-                                                  ],
-                                            );
-                                            if (result != null) {
-                                                  archivo = File(
-                                                      result.files.single.path!);
-                                                  
-                                                  await uploadDocument(
-                                                          File(archivo!.path),
-                                                          txtRFCFact.text)
-                                                      .then((value) {
-                                                    if (value!.isNotEmpty) {
-                                                      documentUpload.value = true;
-                                                      ScaffoldMessenger.of(context)
-                                                          .showSnackBar(const SnackBar(
-                                                              content: Text(
-                                                                  'Archivo subido correctamente')));
+                                                  valueListenable:
+                                                      documentUpload,
+                                                  builder:
+                                                      (context, value, child) {
+                                                    if (value) {
+                                                      linkDoc =
+                                                          archivo!.path;
+                                                      return Text(
+                                                        'Archivo subido: ${linkDoc.split('/').last}',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      );
                                                     } else {
-                                                      ScaffoldMessenger.of(context)
-                                                          .showSnackBar(const SnackBar(
-                                                              content: Text(
-                                                                  'Error al subir el archivo')));
+                                                      return Column(
+                                                        children: [
+                                                          Text(
+                                                              'Sube tu constancia de situación fiscal',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center),
+                                                          SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                          TextButton(
+                                                            onPressed:
+                                                                () async {
+                                                              FilePickerResult?
+                                                                  result =
+                                                                  await FilePicker
+                                                                      .platform
+                                                                      .pickFiles(
+                                                                type: FileType
+                                                                    .custom,
+                                                                allowedExtensions: [
+                                                                  'pdf',
+                                                                ],
+                                                              );
+                                                              if (result !=
+                                                                  null) {
+                                                                archivo = File(
+                                                                    result
+                                                                        .files
+                                                                        .single
+                                                                        .path!);
+
+                                                                await uploadDocument(
+                                                                        File(archivo!
+                                                                            .path),
+                                                                        txtRFCFact
+                                                                            .text)
+                                                                    .then(
+                                                                        (value) {
+                                                                  if (value!
+                                                                      .isNotEmpty) {
+                                                                    documentUpload
+                                                                            .value =
+                                                                        true;
+                                                                    ScaffoldMessenger.of(
+                                                                            context)
+                                                                        .showSnackBar(const SnackBar(
+                                                                            content:
+                                                                                Text('Archivo subido correctamente')));
+                                                                  } else {
+                                                                    ScaffoldMessenger.of(
+                                                                            context)
+                                                                        .showSnackBar(const SnackBar(
+                                                                            content:
+                                                                                Text('Error al subir el archivo')));
+                                                                  }
+                                                                });
+                                                                // Llamar a la función para subir el archivo aquí
+                                                              }
+                                                            },
+                                                            child: Text(
+                                                                'Seleccionar archivo'),
+                                                          ),
+                                                        ],
+                                                      );
                                                     }
-                                                  });
-                                                  // Llamar a la función para subir el archivo aquí
-                                            }
-                                          },
-                                          child: Text('Seleccionar archivo'),
-                                        ),
-                                                ],
-                                              );
-                                            }
-                                          },)
+                                                  },
+                                                )
                                               ],
                                             );
                                           }
@@ -1319,64 +1354,84 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           height: 10,
                                         ),
                                         ValueListenableBuilder(
-                                          valueListenable: documentUpload, 
+                                          valueListenable: documentUpload,
                                           builder: (context, value, child) {
-                                            if (value){
+                                            if (value) {
                                               return Container(
-                                                width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2,
-                                              height: 60,
-                                                child: Text('Archivo subido: ${archivo!.path.split('/').last}', style: TextStyle(color: Colors.white), textAlign: TextAlign.center));
-                                            }else {
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      2,
+                                                  height: 60,
+                                                  child: Text(
+                                                      'Archivo subido: ${archivo!.path.split('/').last}',
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                      textAlign:
+                                                          TextAlign.center));
+                                            } else {
                                               return Column(
                                                 children: [
-                                                  Text('Sube tu constancia de situación fiscal', style: TextStyle(color: Colors.white), textAlign: TextAlign.center),
+                                                  Text(
+                                                      'Sube tu constancia de situación fiscal',
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                      textAlign:
+                                                          TextAlign.center),
                                                   SizedBox(
                                                     height: 20,
                                                   ),
                                                   TextButton(
-                                          onPressed: () async {
-                                            FilePickerResult? result =
-                                                    await FilePicker.platform
-                                                        .pickFiles(
-                                                  type: FileType.custom,
-                                                  allowedExtensions: [
-                                                    'jpg',
-                                                    'pdf',
-                                                    'doc'
-                                                  ],
-                                            );
-                                            if (result != null) {
-                                                  archivo = File(
-                                                      result.files.single.path!);
-                                                  await uploadDocument(
-                                                          File(archivo!.path),
-                                                          txtRFCFact.text)
-                                                      .then((value) {
-                                                    if (value!.isNotEmpty) {
-                                                      documentUpload.value = true;
-                                                      ScaffoldMessenger.of(context)
-                                                          .showSnackBar(const SnackBar(
-                                                              content: Text(
-                                                                  'Archivo subido correctamente')));
-                                                    } else {
-                                                      ScaffoldMessenger.of(context)
-                                                          .showSnackBar(const SnackBar(
-                                                              content: Text(
-                                                                  'Error al subir el archivo')));
-                                                    }
-                                                  });
-                                                  // Llamar a la función para subir el archivo aquí
-                                            }
-                                          },
-                                          child: Text('Seleccionar archivo'),
-                                        ),
+                                                    onPressed: () async {
+                                                      FilePickerResult? result =
+                                                          await FilePicker
+                                                              .platform
+                                                              .pickFiles(
+                                                        type: FileType.custom,
+                                                        allowedExtensions: [
+                                                          'pdf',
+                                                        ],
+                                                      );
+                                                      if (result != null) {
+                                                        archivo = File(result
+                                                            .files
+                                                            .single
+                                                            .path!);
+                                                        await uploadDocument(
+                                                                File(archivo!
+                                                                    .path),
+                                                                txtRFCFact.text)
+                                                            .then((value) {
+                                                          if (value!
+                                                              .isNotEmpty) {
+                                                            documentUpload
+                                                                .value = true;
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    const SnackBar(
+                                                                        content:
+                                                                            Text('Archivo subido correctamente')));
+                                                          } else {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    const SnackBar(
+                                                                        content:
+                                                                            Text('Error al subir el archivo')));
+                                                          }
+                                                        });
+                                                        // Llamar a la función para subir el archivo aquí
+                                                      }
+                                                    },
+                                                    child: Text(
+                                                        'Seleccionar archivo'),
+                                                  ),
                                                 ],
                                               );
                                             }
-                                          },)
+                                          },
+                                        )
                                       ],
                                     );
                                   }
@@ -1522,60 +1577,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
       floatingActionButton: FloatingActionButton.extended(
           backgroundColor: Colors.grey[700],
           onPressed: () async {
-            if(nuevo){
+            if (nuevo) {
               if (_formKey.currentState!.validate() && documentUpload.value) {
                 if (image.value != null) {
-                final uploaded = await uploadImage(File(image.value!.path));
-                await FirebaseAuth.instance.currentUser
-                    ?.updateDisplayName(txtNameFact.text);
-                    _firebase.insEmpresa({
-                        'correo': FirebaseAuth.instance.currentUser!.email,
-                        'nombre': txtNameFact.text,
-                        'descripción': txtDescFact.text,
-                        'pais': txtLocacionFact.text,
-                        'rfc': txtRFCFact.text,
-                        'telefono': txtTelFact.text,
-                        'tipo_empresa': txtRubroFact.text,
-                        'url': txtUrlFact.text,
-                      });
-                if (uploaded) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Imagen subida correctamente')));
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Error al subir la imagen')));
-                }
-              } else {
-                await FirebaseAuth.instance.currentUser
-                    ?.updateDisplayName(txtNameFact.text);
+                  final uploaded = await uploadImage(File(image.value!.path));
+                  await FirebaseAuth.instance.currentUser
+                      ?.updateDisplayName(txtNameFact.text);
                   _firebase.insEmpresa({
-                        'correo': FirebaseAuth.instance.currentUser!.email,
-                        'nombre': txtNameFact.text,
-                        'descripción': txtDescFact.text,
-                        'pais': txtLocacionFact.text,
-                        'rfc': txtRFCFact.text,
-                        'telefono': txtTelFact.text,
-                        'tipo_empresa': txtRubroFact.text,
-                        'url': txtUrlFact.text,
-                      });
+                    'correo': FirebaseAuth.instance.currentUser!.email,
+                    'nombre': txtNameFact.text,
+                    'descripción': txtDescFact.text,
+                    'pais': txtLocacionFact.text,
+                    'rfc': txtRFCFact.text,
+                    'telefono': txtTelFact.text,
+                    'tipo_empresa': txtRubroFact.text,
+                    'url': txtUrlFact.text,
+                    'urlpdf': linkDoc.path,
+                  });
+                  if (uploaded) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Imagen subida correctamente')));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Error al subir la imagen')));
+                  }
+                } else {
+                  await FirebaseAuth.instance.currentUser
+                      ?.updateDisplayName(txtNameFact.text);
+                  _firebase.insEmpresa({
+                    'correo': FirebaseAuth.instance.currentUser!.email,
+                    'nombre': txtNameFact.text,
+                    'descripción': txtDescFact.text,
+                    'pais': txtLocacionFact.text,
+                    'rfc': txtRFCFact.text,
+                    'telefono': txtTelFact.text,
+                    'tipo_empresa': txtRubroFact.text,
+                    'url': txtUrlFact.text,
+                  });
+                }
+                imageChange.value = !imageChange.value;
+                Navigator.pop(context);
               }
-              imageChange.value = !imageChange.value;
-              Navigator.pop(context);
-              }
-            }else{
-if (image.value != null) {
+            } else {
+              if (image.value != null) {
                 final uploaded = await uploadImage(File(image.value!.path));
                 await FirebaseAuth.instance.currentUser
                     ?.updateDisplayName(txtNameFact.text);
-                 _firebase.updEmpresa({
-                        'nombre': txtNameFact.text,
-                        'descripción': txtDescFact.text,
-                        'pais': txtLocacionFact.text,
-                        'rfc': txtRFCFact.text,
-                        'telefono': txtTelFact.text,
-                        'tipo_empresa': txtRubroFact.text,
-                        'url': txtUrlFact.text,
-                      });
+                _firebase.updEmpresa({
+                  'nombre': txtNameFact.text,
+                  'descripción': txtDescFact.text,
+                  'pais': txtLocacionFact.text,
+                  'rfc': txtRFCFact.text,
+                  'telefono': txtTelFact.text,
+                  'tipo_empresa': txtRubroFact.text,
+                  'url': txtUrlFact.text,
+                });
                 if (uploaded) {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Imagen subida correctamente')));
@@ -1586,15 +1642,15 @@ if (image.value != null) {
               } else {
                 await FirebaseAuth.instance.currentUser
                     ?.updateDisplayName(txtNameFact.text);
-                 _firebase.updEmpresa({
-                        'nombre': txtNameFact.text,
-                        'descripción': txtDescFact.text,
-                        'pais': txtLocacionFact.text,
-                        'rfc': txtRFCFact.text,
-                        'telefono': txtTelFact.text,
-                        'tipo_empresa': txtRubroFact.text,
-                        'url': txtUrlFact.text,
-                      });
+                _firebase.updEmpresa({
+                  'nombre': txtNameFact.text,
+                  'descripción': txtDescFact.text,
+                  'pais': txtLocacionFact.text,
+                  'rfc': txtRFCFact.text,
+                  'telefono': txtTelFact.text,
+                  'tipo_empresa': txtRubroFact.text,
+                  'url': txtUrlFact.text,
+                });
               }
               imageChange.value = !imageChange.value;
               Navigator.pop(context);

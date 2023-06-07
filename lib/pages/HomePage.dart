@@ -161,6 +161,17 @@ class _HomePageState extends State<HomePage> {
             leading: const Icon(Icons.settings),
             trailing: const Icon(Icons.chevron_right),
           ),
+          ListTile(
+            onTap: () {
+              Navigator.pushNamed(context, '/nuevo');
+            },
+            iconColor: Colors.grey,
+            textColor: Colors.grey,
+            title: const Text('Nueva'),
+            subtitle: const Text('La nueva'),
+            leading: const Icon(Icons.new_label),
+            trailing: const Icon(Icons.chevron_right),
+          ),
         ],
       )),
       floatingActionButton: FloatingActionButton.extended(

@@ -3,6 +3,7 @@ import 'package:firebase_app_web/screens/add_proyecto_screen.dart';
 import 'package:firebase_app_web/screens/empresaproyect.dart';
 import 'package:firebase_app_web/screens/favorite_proyect.dart';
 import 'package:firebase_app_web/screens/inversiones_screen.dart';
+import 'package:firebase_app_web/screens/pantall_nueva.dart';
 import 'package:firebase_app_web/screens/proyect_screen.dart';
 import 'package:firebase_app_web/screens/themeSelectror_screen.dart';
 import 'package:flutter/material.dart';
@@ -16,5 +17,6 @@ Map<String, WidgetBuilder> getApplicationRoutes() {
       '/theme': (BuildContext context) => const ThemeSelectorScreen(),
       '/item': (BuildContext context) => ProyectScreen(),
       '/favorit': (BuildContext context) => ListProyectosFavoritos(),
+      '/nuevo': (BuildContext context) => NuevaPantalla(),
   };
 }
